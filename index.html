@@ -334,26 +334,33 @@
                 const cardId = `${idPrefix}-${label}`;
                 const hasRecording = recordings[cardId];
 
+                // Ajustar tamaño de fuente si el texto es muy largo
+                const labelSize = label.length > 8 ? 'text-2xl' : label.length > 4 ? 'text-3xl' : 'text-5xl';
+
                 return (
-                    <div className={`p-6 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center shadow-xl ${theme.cardBg} ${theme.cardHover}`}>
+                    <div className={`p-6 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center shadow-xl ${theme.cardBg} ${theme.cardHover} w-full max-w-full overflow-hidden`}>
                         <div className="absolute top-4 left-4 flex gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
                             <button onClick={() => playAudio(item.sound, 'en-US')} title="Referencia Nativa" className="p-2 bg-zinc-950/50 rounded-lg text-indigo-400 hover:text-white hover:bg-indigo-600 transition-all shadow-inner">
                                 <Icon name="headphones" size={14} />
                             </button>
                         </div>
-                        <span className={`text-5xl font-black block text-center mb-1 mt-2 text-white`}>{label}</span>
+                        <div className="w-full text-center px-2">
+                            <span className={`${labelSize} font-black block text-center mb-1 mt-4 text-white uppercase tracking-tighter break-words`}>
+                                {label}
+                            </span>
+                        </div>
                         <span className="text-indigo-400 font-mono text-xl block text-center mb-2">{item.s}</span>
-                        <p className={`text-[11px] text-center mb-6 h-12 leading-tight font-medium overflow-hidden ${theme.textMuted}`}>{item.desc}</p>
+                        <p className={`text-[10px] text-center mb-6 h-12 leading-tight font-medium overflow-y-auto px-2 ${theme.textMuted}`}>{item.desc}</p>
 
-                        <div className="grid grid-cols-2 gap-3 w-full mb-4">
+                        <div className="grid grid-cols-2 gap-2 w-full mb-4">
                             <button
                                 onClick={() => hasRecording ? playRecording(cardId) : playAudio(item.sound, 'en-US')}
-                                className={`p-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 shadow-lg transition-all active:scale-95 ${hasRecording ? 'bg-amber-600 text-white' : theme.btnPrimary}`}>
-                                <Icon name={hasRecording ? "user" : "volume-2"} size={16} />
+                                className={`p-3 rounded-xl font-black text-[9px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 shadow-lg transition-all active:scale-95 ${hasRecording ? 'bg-amber-600 text-white' : theme.btnPrimary}`}>
+                                <Icon name={hasRecording ? "user" : "volume-2"} size={14} />
                                 {hasRecording ? "MI VOZ" : "INGLÉS"}
                             </button>
-                            <button onClick={() => playAudio(label || item.letter || item.L, 'es-MX')} className={`p-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${theme.btnSecondary}`}>
-                                <Icon name="globe" size={16} />
+                            <button onClick={() => playAudio(label || item.letter || item.L, 'es-MX')} className={`p-3 rounded-xl font-black text-[9px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${theme.btnSecondary}`}>
+                                <Icon name="globe" size={14} />
                                 ESPAÑOL
                             </button>
                         </div>
@@ -361,8 +368,8 @@
                         <div className="w-full">
                             <button
                                 onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
-                                className={`w-full p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : theme.btnDanger}`}>
-                                <Icon name={recordingState === cardId ? "square" : "mic"} size={12} /> {recordingState === cardId ? 'STOP' : 'GRABAR NUEVA'}
+                                className={`w-full p-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner border border-zinc-700/50 ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : theme.btnDanger}`}>
+                                <Icon name={recordingState === cardId ? "square" : "mic"} size={10} /> {recordingState === cardId ? 'STOP' : 'GRABAR'}
                             </button>
                         </div>
                     </div>
@@ -373,26 +380,19 @@
                 <div className="animate-fade-in pb-10">
                     <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
                         <div className="flex-1">
-                            <h2 className={`text-4xl font-black flex items-center gap-3 text-white`}><Icon className="text-rose-500" name="mic" /> Centro de Sonidos</h2>
-                            <p className={`mt-2 ${theme.textMuted}`}>Entrena tu oído con la pronunciación nativa y grabaciones propias.</p>
+                            <h2 className={`text-5xl md:text-6xl font-black flex items-center gap-4 text-white mb-2 italic`}><Icon className="text-rose-500" name="mic" size={40} /> Centro de Sonidos</h2>
+                            <p className={`text-lg ${theme.textMuted}`}>Perfecciona tu pronunciación letra por letra.</p>
                         </div>
-                        <div className="flex items-center gap-4 w-full md:w-auto">
-                            <div className="flex-1 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-2xl text-[10px] leading-relaxed italic text-indigo-300 shadow-2xl relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-1 opacity-20"><Icon name="info" size={40} /></div>
-                                <span className="font-bold text-indigo-400 block mb-1">PRO TIP:</span>
-                                {phoneticData.rules.vowels}
-                            </div>
-                            <button onClick={toggleFullscreen} className={`p-4 rounded-2xl flex items-center justify-center h-full aspect-square ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400 border border-zinc-800 transition-all hover:scale-105 active:scale-95`}>
-                                {isFullscreen ? <Icon name="minimize" size={24} /> : <Icon name="maximize" size={24} />}
-                            </button>
-                        </div>
+                        <button onClick={toggleFullscreen} className={`p-4 rounded-2xl flex items-center justify-center ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400 border border-zinc-800 transition-all hover:scale-105 active:scale-95`}>
+                            {isFullscreen ? <Icon name="minimize" size={24} /> : <Icon name="maximize" size={24} />}
+                        </button>
                     </div>
 
-                    <div className="space-y-20">
+                    <div className="space-y-24">
                         <section>
                             <h3 className="text-xl font-black text-amber-500 border-l-4 border-amber-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
                                 Abecedario
-                                <span className="text-[10px] text-zinc-600 font-normal">A-Z ALPHA</span>
+                                <span className="text-[10px] text-zinc-600 font-normal italic">THE ALPHABET</span>
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                 {phoneticData.alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
@@ -400,30 +400,48 @@
                         </section>
 
                         <section className="relative">
-                            <h3 className="text-xl font-black text-rose-500 border-l-4 border-rose-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
-                                Vocales Cortas (Short)
-                                <span className="text-[10px] text-zinc-600 font-normal">CVC RULE</span>
-                            </h3>
+                            <div className="mb-8">
+                                <h3 className="text-xl font-black text-rose-500 border-l-4 border-rose-500 pl-4 uppercase tracking-widest flex justify-between items-center mb-4">
+                                    Vocales Cortas (Short)
+                                    <span className="text-[10px] text-zinc-600 font-normal italic">CVC RULE</span>
+                                </h3>
+                                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-[10px] leading-relaxed italic text-rose-300/80 shadow-2xl inline-block max-w-2xl">
+                                    <span className="font-bold text-rose-400 block mb-1 uppercase tracking-tighter">Pro Tip - Vocales Cortas:</span>
+                                    {phoneticData.rules.vowels.split('.')[0]}. EJ: CAT, BED, PIG.
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                                 {phoneticData.shortVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="short" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className="text-xl font-black text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
-                                Vocales Largas (Long)
-                                <span className="text-[10px] text-zinc-600 font-normal">SILENT E RULE</span>
-                            </h3>
+                            <div className="mb-8">
+                                <h3 className="text-xl font-black text-emerald-500 border-l-4 border-emerald-500 pl-4 uppercase tracking-widest flex justify-between items-center mb-4">
+                                    Vocales Largas (Long)
+                                    <span className="text-[10px] text-zinc-600 font-normal italic">SILENT E RULE</span>
+                                </h3>
+                                <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-[10px] leading-relaxed italic text-emerald-300/80 shadow-2xl inline-block max-w-2xl">
+                                    <span className="font-bold text-emerald-400 block mb-1 uppercase tracking-tighter">Pro Tip - Vocales Largas:</span>
+                                    {phoneticData.rules.vowels.split('.')[1]}. EJ: CAKE, TREE, ICE.
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                                 {phoneticData.longVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="long" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className="text-xl font-black text-violet-500 border-l-4 border-violet-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
-                                Retos Fonéticos
-                                <span className="text-[10px] text-zinc-600 font-normal">TH & DIGRAPHS</span>
-                            </h3>
+                            <div className="mb-8">
+                                <h3 className="text-xl font-black text-violet-500 border-l-4 border-violet-500 pl-4 uppercase tracking-widest flex justify-between items-center mb-4">
+                                    Retos Fonéticos
+                                    <span className="text-[10px] text-zinc-600 font-normal italic">TH & DIGRAPHS</span>
+                                </h3>
+                                <div className="p-4 bg-violet-500/10 border border-violet-500/20 rounded-2xl text-[10px] leading-relaxed italic text-violet-300/80 shadow-2xl inline-block max-w-2xl">
+                                    <span className="font-bold text-violet-400 block mb-1 uppercase tracking-tighter">Pro Tip - TH Sounds:</span>
+                                    {phoneticData.rules.th}
+                                </div>
+                            </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                 {phoneticData.trickySounds.map((item, i) => <SoundCard key={item.L || i} item={item} idPrefix="tricky" />)}
                             </div>
