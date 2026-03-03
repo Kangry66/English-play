@@ -452,7 +452,7 @@
             return (
                 <div className="max-w-md mx-auto animate-fade-in">
                     <div className="flex justify-between items-center mb-8">
-                        <h2 className={`text-3xl font-black text-white`}>Visual</h2>
+                        <h2 className={`text-3xl font-black text-white`}>Práctica Visual 👁️</h2>
                         <div className="flex items-center gap-4">
                             <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-5 py-2 rounded-full font-black text-sm shadow-xl">SCORE: {score}</span>
                             <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted}`}>{isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}</button>
@@ -485,11 +485,17 @@
                         ))}
                     </div>
 
-                    {feedback === 'correct' && (
-                        <button onClick={generateNext} className={`w-full py-5 rounded-3xl font-black text-xl animate-pop-in transition-all ${theme.btnPrimary} flex items-center justify-center gap-3`}>
-                            Siguiente Palabra <Icon name="arrow-right" />
-                        </button>
-                    )}
+                    <div className="flex flex-col gap-4">
+                        {feedback === 'correct' ? (
+                            <button onClick={generateNext} className={`w-full py-5 rounded-3xl font-black text-xl animate-pop-in transition-all ${theme.btnPrimary} flex items-center justify-center gap-3`}>
+                                Siguiente Palabra <Icon name="arrow-right" />
+                            </button>
+                        ) : (
+                            <button onClick={generateNext} className="text-indigo-500 font-black uppercase tracking-widest text-xs hover:text-indigo-400 flex items-center justify-center gap-2">
+                                <Icon name="fast-forward" size={12} /> Saltar palabra
+                            </button>
+                        )}
+                    </div>
                 </div>
             );
         }
