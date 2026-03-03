@@ -119,61 +119,65 @@
         ];
 
         const phoneticData = {
+            rules: {
+                vowels: "REGLA: Las vocales cortas suelen aparecer en palabras de una sola vocal entre consonantes (CVC - Cat). Las largas aparecen cuando hay dos vocales juntas (CVVC - Rain) o una E muda al final (CVC+e - Cake).",
+                th: "REGLA: TH sorda (/θ/) suena como aire puro soplando entre los dientes (Z de España). TH sonora (/ð/) suena igual pero haciendo vibrar las cuerdas vocales (como una D suave)."
+            },
             alphabet: [
-                { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'A', desc: 'Nombre: "ei". Sonido: "a" abierta.' },
-                { L: 'B', s: '/biː/', w: 'Banana', sound: 'B', desc: 'Nombre: "bi". Sonido: "b" explosiva.' },
-                { L: 'C', s: '/siː/', w: 'Cat', sound: 'C', desc: 'Nombre: "si". Sonido: "k" fuerte.' },
-                { L: 'D', s: '/diː/', w: 'Dog', sound: 'D', desc: 'Nombre: "di". Sonido: "d" dental.' },
-                { L: 'E', s: '/iː/', w: 'Elephant', sound: 'E', desc: 'Nombre: "i". Sonido: "e" seca.' },
-                { L: 'F', s: '/ef/', w: 'Fish', sound: 'F', desc: 'Nombre: "ef". Sonido: soplo dental.' },
-                { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'G', desc: 'Nombre: "yi". Sonido: "g" de gato.' },
-                { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'H', desc: 'Nombre: "eich". Sonido: aire suave.' },
-                { L: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Nombre: "ai". Sonido: "i" corta.' },
-                { L: 'J', s: '/dʒeɪ/', w: 'Juice', sound: 'J', desc: 'Nombre: "yei". Sonido: "y" fuerte.' },
-                { L: 'K', s: '/keɪ/', w: 'Key', sound: 'K', desc: 'Nombre: "kei". Sonido: "k" seca.' },
-                { L: 'L', s: '/el/', w: 'Lion', sound: 'L', desc: 'Nombre: "el". Sonido: lengua arriba.' },
-                { L: 'M', s: '/em/', w: 'Monkey', sound: 'M', desc: 'Nombre: "em". Sonido: labios cerrados.' },
-                { L: 'N', s: '/en/', w: 'New', sound: 'N', desc: 'Nombre: "en". Sonido: nasal.' },
-                { L: 'O', s: '/oʊ/', w: 'Old', sound: 'O', desc: 'Nombre: "ou". Sonido: "o" redonda.' },
-                { L: 'P', s: '/piː/', w: 'Pig', sound: 'P', desc: 'Nombre: "pi". Sonido: explosión "p".' },
-                { L: 'Q', s: '/kjuː/', w: 'Queen', sound: 'Q', desc: 'Nombre: "kiu". Sonido: "kw".' },
-                { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'R', desc: 'Nombre: "ar". Sonido: lengua curva.' },
-                { L: 'S', s: '/es/', w: 'Sad', sound: 'S', desc: 'Nombre: "es". Sonido: siseo.' },
-                { L: 'T', s: '/tiː/', w: 'Time', sound: 'T', desc: 'Nombre: "ti". Sonido: golpe "t".' },
-                { L: 'U', s: '/juː/', w: 'Ugly', sound: 'U', desc: 'Nombre: "iu". Sonido: "u" gutural.' },
-                { L: 'V', s: '/viː/', w: 'Very', sound: 'V', desc: 'Nombre: "vi". Sonido: vibración "v".' },
-                { L: 'W', s: '/ˈdʌbəl.juː/', w: 'Water', sound: 'W', desc: 'Nombre: "doble u". Sonido: aire.' },
-                { L: 'X', s: '/eks/', w: 'X-ray', sound: 'X', desc: 'Nombre: "eks". Sonido: "ks".' },
-                { L: 'Y', s: '/waɪ/', w: 'Yellow', sound: 'Y', desc: 'Nombre: "wai". Sonido: "y" suave.' },
-                { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'Z', desc: 'Nombre: "zi". Sonido: abeja.' }
+                { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'A', desc: 'Nombre: "ei". Sonido: "a" abierta combinada con una "i" suave.' },
+                { L: 'B', s: '/biː/', w: 'Banana', sound: 'B', desc: 'Nombre: "bi". Sonido: Explosión fuerte de labios cerrados.' },
+                { L: 'C', s: '/siː/', w: 'Cat', sound: 'C', desc: 'Nombre: "si". Suena como "k" de kilo antes de A, O, U.' },
+                { L: 'D', s: '/diː/', w: 'Dog', sound: 'D', desc: 'Nombre: "di". Pon la lengua detrás de los dientes frontales.' },
+                { L: 'E', s: '/iː/', w: 'Elephant', sound: 'E', desc: 'Nombre: "i". Tensa los labios como si sonrieras.' },
+                { L: 'F', s: '/ef/', w: 'Fish', sound: 'F', desc: 'Nombre: "ef". Dientes superiores tocando el labio inferior.' },
+                { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'G', desc: 'Nombre: "yi". Sonido gutural desde la garganta.' },
+                { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'H', desc: 'Nombre: "eich". No es como la J, es un suspiro de aire.' },
+                { L: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Nombre: "ai". Comienza en el centro y sube a la boca.' },
+                { L: 'J', s: '/dʒeɪ/', w: 'Juice', sound: 'J', desc: 'Nombre: "yei". Lengua contra el paladar con fuerza.' },
+                { L: 'K', s: '/keɪ/', w: 'Key', sound: 'K', desc: 'Nombre: "kei". Bloquea el aire y suéltalo de golpe.' },
+                { L: 'L', s: '/el/', w: 'Lion', sound: 'L', desc: 'Nombre: "el". Punta de la lengua al paladar superior.' },
+                { L: 'M', s: '/em/', w: 'Monkey', sound: 'M', desc: 'Nombre: "em". Labios cerrados, el aire sale por la nariz.' },
+                { L: 'N', s: '/en/', w: 'New', sound: 'N', desc: 'Nombre: "en". Lengua arriba, el aire sale por la nariz.' },
+                { L: 'O', s: '/oʊ/', w: 'Old', sound: 'O', desc: 'Nombre: "ou". Redondea los labios hacia el final.' },
+                { L: 'P', s: '/piː/', w: 'Pig', sound: 'P', desc: 'Nombre: "pi". Suelta aire con los labios (explosión).' },
+                { L: 'Q', s: '/kjuː/', w: 'Queen', sound: 'Q', desc: 'Nombre: "kiu". Siempre seguida de una U suave.' },
+                { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'R', desc: 'Nombre: "ar". Dobla la lengua hacia atrás sin tocar nada.' },
+                { L: 'S', s: '/es/', w: 'Sad', sound: 'S', desc: 'Nombre: "es". Siseo continuo por centro de lengua.' },
+                { L: 'T', s: '/tiː/', w: 'Time', sound: 'T', desc: 'Nombre: "ti". Soplo dental rápido y seco.' },
+                { L: 'U', s: '/juː/', w: 'Ugly', sound: 'U', desc: 'Nombre: "iu". Suena como la palabra YOU.' },
+                { L: 'V', s: '/viː/', w: 'Very', sound: 'V', desc: 'Nombre: "vi". Haz vibrar tus dientes superiores.' },
+                { L: 'W', s: '/ˈdʌbəl.juː/', w: 'Water', sound: 'W', desc: 'Nombre: "doble u". Sonido de aire circular.' },
+                { L: 'X', s: '/eks/', w: 'X-ray', sound: 'X', desc: 'Nombre: "eks". Siseo fuerte al final.' },
+                { L: 'Y', s: '/waɪ/', w: 'Yellow', sound: 'Y', desc: 'Nombre: "wai". Suena como una I tónica.' },
+                { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'Z', desc: 'Nombre: "zi". Como una abeja zumbando (vibración).' }
             ],
             shortVowels: [
-                { letter: 'A', s: '/æ/', w: 'Cat', sound: 'A', desc: 'Boca muy abierta, como sonriendo.' },
-                { letter: 'E', s: '/e/', w: 'Bed', sound: 'E', desc: 'Corta, seca y rápida.' },
-                { letter: 'I', s: '/ɪ/', w: 'Pig', sound: 'I', desc: 'Relajada, sonido entre I y E.' },
-                { letter: 'O', s: '/ɒ/', w: 'Dog', sound: 'O', desc: 'Labios redondos, casi una "a".' },
-                { letter: 'U', s: '/ʌ/', w: 'Up', sound: 'U', desc: 'Sonido gutural, como un golpe.' }
+                { letter: 'A', s: '/æ/', w: 'Cat', sound: 'A', desc: 'Boca muy abierta. Regla: Palabra CVC (Consonante-Vocal-Consonante).' },
+                { letter: 'E', s: '/e/', w: 'Bed', sound: 'E', desc: 'Relajada. Regla: Aparece en palabras cortas de una vocal.' },
+                { letter: 'I', s: '/ɪ/', w: 'Pig', sound: 'I', desc: 'Entre I y E. Regla: Nunca es una I larga española.' },
+                { letter: 'O', s: '/ɒ/', w: 'Dog', sound: 'O', desc: 'Boca redonda. Regla: Suena casi como una "a" suave.' },
+                { letter: 'U', s: '/ʌ/', w: 'Up', sound: 'U', desc: 'Gutural. Regla: Sonido de sorpresa corto.' }
             ],
             longVowels: [
-                { letter: 'A', s: '/eɪ/', w: 'Cake', sound: 'A', desc: 'Suena como "ei".' },
-                { letter: 'E', s: '/iː/', w: 'Tree', sound: 'E', desc: 'Suena como una "i" larga y tensa.' },
-                { letter: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Suena como "ai".' },
-                { letter: 'O', s: '/oʊ/', w: 'Bone', sound: 'O', desc: 'Suena como "ou".' },
-                { letter: 'U', s: '/juː/', w: 'Use', sound: 'U', desc: 'Suena como "iu" (you).' }
+                { letter: 'A', s: '/eɪ/', w: 'Cake', sound: 'A', desc: 'Suena "ei". Regla: Si hay una E al final, la A es larga.' },
+                { letter: 'E', s: '/iː/', w: 'Tree', sound: 'E', desc: 'Suena "i". Regla: Común en palabras con EE o EA.' },
+                { letter: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Suena "ai". Regla: Si hay E muda, la I dice su nombre.' },
+                { letter: 'O', s: '/oʊ/', w: 'Bone', sound: 'O', desc: 'Suena "ou". Regla: La vocal O "saluda" al final.' },
+                { letter: 'U', s: '/juː/', w: 'Use', sound: 'U', desc: 'Suena "iu". Regla: El sonido original del abecedario.' }
             ],
             trickySounds: [
-                { letter: 'C (Soft)', s: '/s/', w: 'City', sound: 'C', desc: 'Suena como S antes de E, I, Y.' },
-                { letter: 'G (Soft)', s: '/dʒ/', w: 'Gym', sound: 'G', desc: 'Suena como J inglesa antes de E, I, Y.' },
-                { letter: 'CH', s: '/tʃ/', w: 'Cheese', sound: 'CH', desc: 'Explosión corta, como "ch" española.' },
-                { letter: 'SH', s: '/ʃ/', w: 'Shoe', sound: 'SH', desc: 'Siseo suave, como pedir silencio.' },
-                { letter: 'TH (Voiceless)', s: '/θ/', w: 'Think', sound: 'TH', desc: 'Aire entre los dientes (Z de España).' },
-                { letter: 'TH (Voiced)', s: '/ð/', w: 'This', sound: 'TH', desc: 'Vibra entre los dientes (como la D).' },
-                { letter: 'PH', s: '/f/', w: 'Phone', sound: 'PH', desc: 'Suena exactamente igual que la F.' },
-                { letter: 'KN', s: '/n/', w: 'Knife', sound: 'KN', desc: 'La K es muda, solo suena la N.' },
-                { letter: 'WR', s: '/r/', w: 'Write', sound: 'WR', desc: 'La W es muda, solo suena la R.' },
-                { letter: 'GH', s: '/f/ o -', w: 'Laugh', sound: 'GH', desc: 'A veces suena F, a veces es muda (High).' },
-                { letter: 'OO (Short)', s: '/ʊ/', w: 'Book', sound: 'OO', desc: 'Una "u" muy relajada y rápida.' },
-                { letter: 'OO (Long)', s: '/uː/', w: 'Moon', sound: 'OO', desc: 'Como una "u" larga y con trompa.' }
+                { letter: 'TH (Voiceless)', s: '/θ/', w: 'Think', sound: 'TH', desc: 'SOLO AIRE. Lengua entre dientes, sopla suavemente sin vibrar.' },
+                { letter: 'TH (Voiced)', s: '/ð/', w: 'This', sound: 'TH', desc: 'CON VIBRACIÓN. Lengua entre dientes, haz zumbar tus cuerdas.' },
+                { letter: 'C (Soft)', s: '/s/', w: 'City', sound: 'C', desc: 'Regla: Suena como S antes de E, I, o Y.' },
+                { letter: 'G (Soft)', s: '/dʒ/', w: 'Gym', sound: 'G', desc: 'Regla: Suena como J fuerte antes de E, I, o Y.' },
+                { letter: 'SH', s: '/ʃ/', w: 'Shoe', sound: 'SH', desc: 'Como pedir silencio. Labios hacia afuera, siseo constante.' },
+                { letter: 'CH', s: '/tʃ/', w: 'Cheese', sound: 'CH', desc: 'Explosión corta. No es continua como la SH.' },
+                { letter: 'PH', s: '/f/', w: 'Phone', sound: 'PH', desc: 'Siempre suena como una F. Ejemplo: Elephant.' },
+                { letter: 'KN', s: '/n/', w: 'Knife', sound: 'KN', desc: 'Regla: En palabras KN, la K es totalmente muda.' },
+                { letter: 'WR', s: '/r/', w: 'Write', sound: 'WR', desc: 'Regla: En palabras WR, la W es totalmente muda.' },
+                { letter: 'GH', s: '/f/ o -', w: 'Laugh', sound: 'GH', desc: 'Final de palabra suele ser F. En medio suele ser muda.' },
+                { letter: 'OO (Short)', s: '/ʊ/', w: 'Book', sound: 'OO', desc: 'U rápida. No fuerces los labios hacia adelante.' },
+                { letter: 'OO (Long)', s: '/uː/', w: 'Moon', sound: 'OO', desc: 'U larga. Proyecta los labios como dando un beso.' }
             ]
         };
 
@@ -328,25 +332,37 @@
             const SoundCard = ({ item, idPrefix }) => {
                 const label = item.L || item.letter;
                 const cardId = `${idPrefix}-${label}`;
+                const hasRecording = recordings[cardId];
+
                 return (
-                    <div className={`p-6 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center ${theme.cardBg} ${theme.cardHover}`}>
+                    <div className={`p-6 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center shadow-xl ${theme.cardBg} ${theme.cardHover}`}>
+                        <div className="absolute top-4 left-4 flex gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => playAudio(item.sound, 'en-US')} title="Referencia Nativa" className="p-2 bg-zinc-950/50 rounded-lg text-indigo-400 hover:text-white hover:bg-indigo-600 transition-all shadow-inner">
+                                <Icon name="headphones" size={14} />
+                            </button>
+                        </div>
                         <span className={`text-5xl font-black block text-center mb-1 mt-2 text-white`}>{label}</span>
                         <span className="text-indigo-400 font-mono text-xl block text-center mb-2">{item.s}</span>
-                        <p className={`text-xs text-center mb-6 h-10 leading-tight font-medium ${theme.textMuted}`}>{item.desc}</p>
+                        <p className={`text-[11px] text-center mb-6 h-12 leading-tight font-medium overflow-hidden ${theme.textMuted}`}>{item.desc}</p>
 
                         <div className="grid grid-cols-2 gap-3 w-full mb-4">
-                            <button onClick={() => playAudio(item.sound, 'en-US')} className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest ${theme.btnPrimary}`}>Inglés</button>
-                            <button onClick={() => playAudio(item.letter || item.L, 'es-MX')} className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest ${theme.btnSecondary}`}>Español</button>
+                            <button
+                                onClick={() => hasRecording ? playRecording(cardId) : playAudio(item.sound, 'en-US')}
+                                className={`p-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 shadow-lg transition-all active:scale-95 ${hasRecording ? 'bg-amber-600 text-white' : theme.btnPrimary}`}>
+                                <Icon name={hasRecording ? "user" : "volume-2"} size={16} />
+                                {hasRecording ? "MI VOZ" : "INGLÉS"}
+                            </button>
+                            <button onClick={() => playAudio(label || item.letter || item.L, 'es-MX')} className={`p-4 rounded-xl font-black text-[10px] uppercase tracking-widest flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${theme.btnSecondary}`}>
+                                <Icon name="globe" size={16} />
+                                ESPAÑOL
+                            </button>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 w-full">
-                            <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
-                                className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : theme.btnDanger}`}>
-                                {recordingState === cardId ? 'Stop' : 'Grabar'}
-                            </button>
-                            <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]}
-                                className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${recordings[cardId] ? theme.btnAccent : 'opacity-20 cursor-not-allowed'}`}>
-                                Mi Voz
+                        <div className="w-full">
+                            <button
+                                onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
+                                className={`w-full p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : theme.btnDanger}`}>
+                                <Icon name={recordingState === cardId ? "square" : "mic"} size={12} /> {recordingState === cardId ? 'STOP' : 'GRABAR NUEVA'}
                             </button>
                         </div>
                     </div>
@@ -355,42 +371,61 @@
 
             return (
                 <div className="animate-fade-in pb-10">
-                    <div className="flex justify-between items-start mb-8">
-                        <div>
+                    <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
+                        <div className="flex-1">
                             <h2 className={`text-4xl font-black flex items-center gap-3 text-white`}><Icon className="text-rose-500" name="mic" /> Centro de Sonidos</h2>
                             <p className={`mt-2 ${theme.textMuted}`}>Entrena tu oído con la pronunciación nativa y grabaciones propias.</p>
                         </div>
-                        <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400`}>
-                            {isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}
-                        </button>
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <div className="flex-1 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-2xl text-[10px] leading-relaxed italic text-indigo-300 shadow-2xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-1 opacity-20"><Icon name="info" size={40} /></div>
+                                <span className="font-bold text-indigo-400 block mb-1">PRO TIP:</span>
+                                {phoneticData.rules.vowels}
+                            </div>
+                            <button onClick={toggleFullscreen} className={`p-4 rounded-2xl flex items-center justify-center h-full aspect-square ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400 border border-zinc-800 transition-all hover:scale-105 active:scale-95`}>
+                                {isFullscreen ? <Icon name="minimize" size={24} /> : <Icon name="maximize" size={24} />}
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="space-y-16">
+                    <div className="space-y-20">
                         <section>
-                            <h3 className={`text-xl font-black text-amber-500 border-l-4 border-amber-500 pl-4 mb-8 uppercase tracking-widest`}>Abecedario</h3>
+                            <h3 className="text-xl font-black text-amber-500 border-l-4 border-amber-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
+                                Abecedario
+                                <span className="text-[10px] text-zinc-600 font-normal">A-Z ALPHA</span>
+                            </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                                 {phoneticData.alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
                             </div>
                         </section>
 
-                        <section>
-                            <h3 className={`text-xl font-black text-rose-500 border-l-4 border-rose-500 pl-4 mb-8 uppercase tracking-widest`}>Vocal Corta</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        <section className="relative">
+                            <h3 className="text-xl font-black text-rose-500 border-l-4 border-rose-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
+                                Vocales Cortas (Short)
+                                <span className="text-[10px] text-zinc-600 font-normal">CVC RULE</span>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                                 {phoneticData.shortVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="short" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className={`text-xl font-black text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-8 uppercase tracking-widest`}>Vocal Larga</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                            <h3 className="text-xl font-black text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
+                                Vocales Largas (Long)
+                                <span className="text-[10px] text-zinc-600 font-normal">SILENT E RULE</span>
+                            </h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
                                 {phoneticData.longVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="long" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className={`text-xl font-black text-violet-500 border-l-4 border-violet-500 pl-4 mb-8 uppercase tracking-widest`}>Retos Fonéticos</h3>
+                            <h3 className="text-xl font-black text-violet-500 border-l-4 border-violet-500 pl-4 mb-8 uppercase tracking-widest flex justify-between items-center">
+                                Retos Fonéticos
+                                <span className="text-[10px] text-zinc-600 font-normal">TH & DIGRAPHS</span>
+                            </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                                {phoneticData.trickySounds.map((item, i) => <SoundCard key={i} item={item} idPrefix="tricky" />)}
+                                {phoneticData.trickySounds.map((item, i) => <SoundCard key={item.L || i} item={item} idPrefix="tricky" />)}
                             </div>
                         </section>
                     </div>
@@ -864,12 +899,18 @@
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => playAudio(item.sound, 'en-US')}
+                                                        title="Escuchar ejemplo nativo"
+                                                        className="p-2 rounded-lg bg-indigo-900/30 text-indigo-400 hover:bg-indigo-600 hover:text-white transition-all shadow-inner border border-indigo-500/20">
+                                                        <Icon name="headphones" size={14} />
+                                                    </button>
                                                     <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
-                                                        className={`p-2 rounded-lg transition-all ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : 'bg-zinc-800 text-zinc-400 hover:text-rose-500'}`}>
+                                                        className={`p-2 rounded-lg transition-all ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse shadow-[0_0_15px_rgba(225,29,72,0.4)]' : 'bg-zinc-800 text-zinc-400 hover:text-rose-500 border border-zinc-700'}`}>
                                                         <Icon name={recordingState === cardId ? 'square' : 'mic'} size={14} />
                                                     </button>
                                                     <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]}
-                                                        className={`p-2 rounded-lg transition-all ${recordings[cardId] ? 'bg-amber-600 text-white' : 'bg-zinc-800 text-zinc-400 opacity-20'}`}>
+                                                        className={`p-2 rounded-lg transition-all ${recordings[cardId] ? 'bg-amber-600 text-white shadow-lg shadow-amber-500/30' : 'bg-zinc-800 text-zinc-400 opacity-20 border border-zinc-700'}`}>
                                                         <Icon name="play" size={14} />
                                                     </button>
                                                 </div>
