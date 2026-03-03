@@ -118,8 +118,72 @@
             { id: 68, en: "How", es: "Cómo", pron: "jau", emoji: "🤔", category: "Preguntas" }
         ];
 
+        const phoneticData = {
+            alphabet: [
+                { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'A', desc: 'Nombre: "ei". Sonido: "a" abierta.' },
+                { L: 'B', s: '/biː/', w: 'Banana', sound: 'B', desc: 'Nombre: "bi". Sonido: "b" explosiva.' },
+                { L: 'C', s: '/siː/', w: 'Cat', sound: 'C', desc: 'Nombre: "si". Sonido: "k" fuerte.' },
+                { L: 'D', s: '/diː/', w: 'Dog', sound: 'D', desc: 'Nombre: "di". Sonido: "d" dental.' },
+                { L: 'E', s: '/iː/', w: 'Elephant', sound: 'E', desc: 'Nombre: "i". Sonido: "e" seca.' },
+                { L: 'F', s: '/ef/', w: 'Fish', sound: 'F', desc: 'Nombre: "ef". Sonido: soplo dental.' },
+                { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'G', desc: 'Nombre: "yi". Sonido: "g" de gato.' },
+                { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'H', desc: 'Nombre: "eich". Sonido: aire suave.' },
+                { L: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Nombre: "ai". Sonido: "i" corta.' },
+                { L: 'J', s: '/dʒeɪ/', w: 'Juice', sound: 'J', desc: 'Nombre: "yei". Sonido: "y" fuerte.' },
+                { L: 'K', s: '/keɪ/', w: 'Key', sound: 'K', desc: 'Nombre: "kei". Sonido: "k" seca.' },
+                { L: 'L', s: '/el/', w: 'Lion', sound: 'L', desc: 'Nombre: "el". Sonido: lengua arriba.' },
+                { L: 'M', s: '/em/', w: 'Monkey', sound: 'M', desc: 'Nombre: "em". Sonido: labios cerrados.' },
+                { L: 'N', s: '/en/', w: 'New', sound: 'N', desc: 'Nombre: "en". Sonido: nasal.' },
+                { L: 'O', s: '/oʊ/', w: 'Old', sound: 'O', desc: 'Nombre: "ou". Sonido: "o" redonda.' },
+                { L: 'P', s: '/piː/', w: 'Pig', sound: 'P', desc: 'Nombre: "pi". Sonido: explosión "p".' },
+                { L: 'Q', s: '/kjuː/', w: 'Queen', sound: 'Q', desc: 'Nombre: "kiu". Sonido: "kw".' },
+                { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'R', desc: 'Nombre: "ar". Sonido: lengua curva.' },
+                { L: 'S', s: '/es/', w: 'Sad', sound: 'S', desc: 'Nombre: "es". Sonido: siseo.' },
+                { L: 'T', s: '/tiː/', w: 'Time', sound: 'T', desc: 'Nombre: "ti". Sonido: golpe "t".' },
+                { L: 'U', s: '/juː/', w: 'Ugly', sound: 'U', desc: 'Nombre: "iu". Sonido: "u" gutural.' },
+                { L: 'V', s: '/viː/', w: 'Very', sound: 'V', desc: 'Nombre: "vi". Sonido: vibración "v".' },
+                { L: 'W', s: '/ˈdʌbəl.juː/', w: 'Water', sound: 'W', desc: 'Nombre: "doble u". Sonido: aire.' },
+                { L: 'X', s: '/eks/', w: 'X-ray', sound: 'X', desc: 'Nombre: "eks". Sonido: "ks".' },
+                { L: 'Y', s: '/waɪ/', w: 'Yellow', sound: 'Y', desc: 'Nombre: "wai". Sonido: "y" suave.' },
+                { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'Z', desc: 'Nombre: "zi". Sonido: abeja.' }
+            ],
+            shortVowels: [
+                { letter: 'A', s: '/æ/', w: 'Cat', sound: 'A', desc: 'Boca muy abierta, como sonriendo.' },
+                { letter: 'E', s: '/e/', w: 'Bed', sound: 'E', desc: 'Corta, seca y rápida.' },
+                { letter: 'I', s: '/ɪ/', w: 'Pig', sound: 'I', desc: 'Relajada, sonido entre I y E.' },
+                { letter: 'O', s: '/ɒ/', w: 'Dog', sound: 'O', desc: 'Labios redondos, casi una "a".' },
+                { letter: 'U', s: '/ʌ/', w: 'Up', sound: 'U', desc: 'Sonido gutural, como un golpe.' }
+            ],
+            longVowels: [
+                { letter: 'A', s: '/eɪ/', w: 'Cake', sound: 'A', desc: 'Suena como "ei".' },
+                { letter: 'E', s: '/iː/', w: 'Tree', sound: 'E', desc: 'Suena como una "i" larga y tensa.' },
+                { letter: 'I', s: '/aɪ/', w: 'Ice', sound: 'I', desc: 'Suena como "ai".' },
+                { letter: 'O', s: '/oʊ/', w: 'Bone', sound: 'O', desc: 'Suena como "ou".' },
+                { letter: 'U', s: '/juː/', w: 'Use', sound: 'U', desc: 'Suena como "iu" (you).' }
+            ],
+            trickySounds: [
+                { letter: 'C (Soft)', s: '/s/', w: 'City', sound: 'C', desc: 'Suena como S antes de E, I, Y.' },
+                { letter: 'G (Soft)', s: '/dʒ/', w: 'Gym', sound: 'G', desc: 'Suena como J inglesa antes de E, I, Y.' },
+                { letter: 'CH', s: '/tʃ/', w: 'Cheese', sound: 'CH', desc: 'Explosión corta, como "ch" española.' },
+                { letter: 'SH', s: '/ʃ/', w: 'Shoe', sound: 'SH', desc: 'Siseo suave, como pedir silencio.' },
+                { letter: 'TH (Voiceless)', s: '/θ/', w: 'Think', sound: 'TH', desc: 'Aire entre los dientes (Z de España).' },
+                { letter: 'TH (Voiced)', s: '/ð/', w: 'This', sound: 'TH', desc: 'Vibra entre los dientes (como la D).' },
+                { letter: 'PH', s: '/f/', w: 'Phone', sound: 'PH', desc: 'Suena exactamente igual que la F.' },
+                { letter: 'KN', s: '/n/', w: 'Knife', sound: 'KN', desc: 'La K es muda, solo suena la N.' },
+                { letter: 'WR', s: '/r/', w: 'Write', sound: 'WR', desc: 'La W es muda, solo suena la R.' },
+                { letter: 'GH', s: '/f/ o -', w: 'Laugh', sound: 'GH', desc: 'A veces suena F, a veces es muda (High).' },
+                { letter: 'OO (Short)', s: '/ʊ/', w: 'Book', sound: 'OO', desc: 'Una "u" muy relajada y rápida.' },
+                { letter: 'OO (Long)', s: '/uː/', w: 'Moon', sound: 'OO', desc: 'Como una "u" larga y con trompa.' }
+            ]
+        };
+
         function App() {
             const [db, setDb] = useState(initialDB);
+            const [recordings, setRecordings] = useState({});
+            const [recordingState, setRecordingState] = useState(null);
+            const mediaRecorderRef = useRef(null);
+            const audioChunksRef = useRef([]);
+
             const [currentTab, setCurrentTab] = useState('phonetics');
             const [toast, setToast] = useState(null);
             const [isDark, setIsDark] = useState(true);
@@ -138,11 +202,32 @@
                 }
             };
 
+            const startRecording = async (id) => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const recorder = new MediaRecorder(stream);
+                    mediaRecorderRef.current = recorder;
+                    audioChunksRef.current = [];
+                    recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+                    recorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        setRecordings(prev => ({ ...prev, [id]: audioUrl }));
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+                    recorder.start();
+                    setRecordingState(id);
+                } catch (err) { showToast("Necesitas permitir acceso al micrófono."); }
+            };
+
+            const stopRecording = () => { if (mediaRecorderRef.current) { mediaRecorderRef.current.stop(); setRecordingState(null); } };
+            const playRecording = (id) => { if (recordings[id]) { new Audio(recordings[id]).play(); } };
+
             const playAudio = (text, requestedLang = 'en-US') => {
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
-                    const isSpanish = db.some(word => word.es.toLowerCase() === text.toLowerCase()) || requestedLang === 'es-MX' || requestedLang === 'es-ES';
+                    const isSpanish = requestedLang === 'es-MX' || requestedLang === 'es-ES';
                     let targetLang = isSpanish ? 'es-MX' : 'en-US';
                     utterance.lang = targetLang;
                     utterance.rate = 0.85;
@@ -206,21 +291,21 @@
                         <NavButton icon={<Icon name="brain" />} label="2. Visual" active={currentTab === 'visual'} onClick={() => setCurrentTab('visual')} theme={theme} isDark={isDark} />
                         <NavButton icon={<Icon name="puzzle" />} label="3. Lego" active={currentTab === 'lego'} onClick={() => setCurrentTab('lego')} theme={theme} isDark={isDark} />
                         <NavButton icon={<Icon name="message-square" />} label="4. Chatbot" active={currentTab === 'chat'} onClick={() => setCurrentTab('chat')} theme={theme} isDark={isDark} />
-                        <div className="md:mt-auto">
+                        <div className="md:mt-auto space-y-2">
                             <NavButton icon={<Icon name="database" />} label="Mi DB" active={currentTab === 'database'} onClick={() => setCurrentTab('database')} isHighlight theme={theme} isDark={isDark} />
-                            <button onClick={() => setIsDark(!isDark)} className="w-full mt-2 flex items-center justify-center p-3 rounded-xl hover:bg-zinc-900 transition-colors text-zinc-500">
+                            <button onClick={() => setIsDark(!isDark)} className="w-full flex items-center justify-center p-3 rounded-xl hover:bg-zinc-900 transition-colors text-zinc-500">
                                 {isDark ? <Icon name="sun" size={20} /> : <Icon name="moon" size={20} />}
                             </button>
                         </div>
                     </nav>
 
                     <main className={`p-4 transition-all duration-300 ${isFullscreen ? 'w-full max-w-5xl mx-auto py-10' : 'md:p-8 max-w-5xl mx-auto'}`}>
-                        {currentTab === 'phonetics' && <PhoneticsModule playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'phonetics' && <PhoneticsModule playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} recordings={recordings} playRecording={playRecording} recordingState={recordingState} startRecording={startRecording} stopRecording={stopRecording} />}
                         {currentTab === 'pronunciation' && <PronunciationGym db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
                         {currentTab === 'visual' && <VisualGame db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
                         {currentTab === 'lego' && <LegoGame db={db} playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
                         {currentTab === 'chat' && <ChatModule db={db} playAudio={playAudio} theme={theme} isDark={isDark} />}
-                        {currentTab === 'database' && <DatabaseManager db={db} setDb={setDb} showToast={showToast} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'database' && <DatabaseManager db={db} setDb={setDb} showToast={showToast} theme={theme} recordings={recordings} playRecording={playRecording} recordingState={recordingState} startRecording={startRecording} stopRecording={stopRecording} />}
                     </main>
                 </div>
             );
@@ -239,107 +324,30 @@
         }
 
         // --- MÓDULO: LABORATORIO DE SONIDOS ---
-        function PhoneticsModule({ playAudio, theme, isDark, isFullscreen, toggleFullscreen }) {
-            const [recordings, setRecordings] = useState({});
-            const [recordingState, setRecordingState] = useState(null);
-            const mediaRecorderRef = useRef(null);
-            const audioChunksRef = useRef([]);
-
-            const alphabet = [
-                { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'ah', desc: 'Nombre: "ei". Sonido: "a" abierta.' },
-                { L: 'B', s: '/biː/', w: 'Banana', sound: 'buh', desc: 'Nombre: "bi". Sonido: "b" explosiva.' },
-                { L: 'C', s: '/siː/', w: 'Cat', sound: 'kuh', desc: 'Nombre: "si". Sonido: "k" fuerte.' },
-                { L: 'D', s: '/diː/', w: 'Dog', sound: 'duh', desc: 'Nombre: "di". Sonido: "d" dental.' },
-                { L: 'E', s: '/iː/', w: 'Elephant', sound: 'eh', desc: 'Nombre: "i". Sonido: "e" seca.' },
-                { L: 'F', s: '/ef/', w: 'Fish', sound: 'fff', desc: 'Nombre: "ef". Sonido: soplo dental.' },
-                { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'guh', desc: 'Nombre: "yi". Sonido: "g" de gato.' },
-                { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'hhh', desc: 'Nombre: "eich". Sonido: aire suave.' },
-                { L: 'I', s: '/aɪ/', w: 'Ice', sound: 'ih', desc: 'Nombre: "ai". Sonido: "i" corta.' },
-                { L: 'J', s: '/dʒeɪ/', w: 'Juice', sound: 'yuh', desc: 'Nombre: "yei". Sonido: "y" fuerte.' },
-                { L: 'K', s: '/keɪ/', w: 'Key', sound: 'kuh', desc: 'Nombre: "kei". Sonido: "k" seca.' },
-                { L: 'L', s: '/el/', w: 'Lion', sound: 'lll', desc: 'Nombre: "el". Sonido: lengua arriba.' },
-                { L: 'M', s: '/em/', w: 'Monkey', sound: 'mmm', desc: 'Nombre: "em". Sonido: labios cerrados.' },
-                { L: 'N', s: '/en/', w: 'New', sound: 'nnn', desc: 'Nombre: "en". Sonido: nasal.' },
-                { L: 'O', s: '/oʊ/', w: 'Old', sound: 'oh', desc: 'Nombre: "ou". Sonido: "o" redonda.' },
-                { L: 'P', s: '/piː/', w: 'Pig', sound: 'puh', desc: 'Nombre: "pi". Sonido: explosión "p".' },
-                { L: 'Q', s: '/kjuː/', w: 'Queen', sound: 'kwuh', desc: 'Nombre: "kiu". Sonido: "kw".' },
-                { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'rrr', desc: 'Nombre: "ar". Sonido: lengua curva.' },
-                { L: 'S', s: '/es/', w: 'Sad', sound: 'sss', desc: 'Nombre: "es". Sonido: siseo.' },
-                { L: 'T', s: '/tiː/', w: 'Time', sound: 'tuh', desc: 'Nombre: "ti". Sonido: golpe "t".' },
-                { L: 'U', s: '/juː/', w: 'Ugly', sound: 'uh', desc: 'Nombre: "iu". Sonido: "u" gutural.' },
-                { L: 'V', s: '/viː/', w: 'Very', sound: 'vvv', desc: 'Nombre: "vi". Sonido: vibración "v".' },
-                { L: 'W', s: '/ˈdʌbəl.juː/', w: 'Water', sound: 'wuh', desc: 'Nombre: "doble u". Sonido: aire.' },
-                { L: 'X', s: '/eks/', w: 'X-ray', sound: 'eks', desc: 'Nombre: "eks". Sonido: "ks".' },
-                { L: 'Y', s: '/waɪ/', w: 'Yellow', sound: 'yuh', desc: 'Nombre: "wai". Sonido: "y" suave.' },
-                { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'zzz', desc: 'Nombre: "zi". Sonido: abeja.' }
-            ];
-
-            const shortVowels = [
-                { letter: 'A', s: '/æ/', w: 'Cat', sound: 'ah', desc: 'Boca muy abierta, como sonriendo.' },
-                { letter: 'E', s: '/e/', w: 'Bed', sound: 'eh', desc: 'Corta, seca y rápida.' },
-                { letter: 'I', s: '/ɪ/', w: 'Pig', sound: 'ih', desc: 'Relajada, sonido entre I y E.' },
-                { letter: 'O', s: '/ɒ/', w: 'Dog', sound: 'o', desc: 'Labios redondos, casi una "a".' },
-                { letter: 'U', s: '/ʌ/', w: 'Up', sound: 'uh', desc: 'Sonido gutural, como un golpe.' }
-            ];
-
-            const longVowels = [
-                { letter: 'A', s: '/eɪ/', w: 'Cake', sound: 'ay', desc: 'Suena como "ei".' },
-                { letter: 'E', s: '/iː/', w: 'Tree', sound: 'ee', desc: 'Suena como una "i" larga y tensa.' },
-                { letter: 'I', s: '/aɪ/', w: 'Ice', sound: 'eye', desc: 'Suena como "ai".' },
-                { letter: 'O', s: '/oʊ/', w: 'Bone', sound: 'oh', desc: 'Suena como "ou".' },
-                { letter: 'U', s: '/juː/', w: 'Use', sound: 'you', desc: 'Suena como "iu" (you).' }
-            ];
-
-            const trickySounds = [
-                { letter: 'C (Suave)', s: '/s/', w: 'City', sound: 'sss', desc: 'Suena como S antes de E, I, Y.' },
-                { letter: 'G (Suave)', s: '/dʒ/', w: 'Gym', sound: 'juh', desc: 'Suena como J inglesa antes de E, I, Y.' },
-                { letter: 'CH', s: '/tʃ/', w: 'Cheese', sound: 'ch ch ch', desc: 'Explosión corta, como "ch" española.' },
-                { letter: 'SH', s: '/ʃ/', w: 'Shoe', sound: 'sh sh sh', desc: 'Siseo suave, como pedir silencio.' },
-                { letter: 'TH (Sordo)', s: '/θ/', w: 'Think', sound: 'th th th', desc: 'Aire entre los dientes (Z de España).' },
-                { letter: 'TH (Sonoro)', s: '/ð/', w: 'This', sound: 'the the the', desc: 'Vibra entre los dientes (como la D).' },
-                { letter: 'PH', s: '/f/', w: 'Phone', sound: 'f f f', desc: 'Suena exactamente igual que la F.' },
-                { letter: 'KN', s: '/n/', w: 'Knife', sound: 'nnn', desc: 'La K es muda, solo suena la N.' },
-                { letter: 'WR', s: '/r/', w: 'Write', sound: 'rrr', desc: 'La W es muda, solo suena la R.' },
-                { letter: 'GH', s: '/f/ o -', w: 'Laugh', sound: 'fff', desc: 'A veces suena F, a veces es muda (High).' },
-                { letter: 'OO', id: 'oo-short', s: '/ʊ/', w: 'Book', sound: 'uh', desc: 'Una "u" muy relajada y rápida.' },
-                { letter: 'OO', id: 'oo-long', s: '/uː/', w: 'Moon', sound: 'ooo', desc: 'Como una "u" larga y con trompa.' }
-            ];
-
-            const startRecording = async (id) => {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    const recorder = new MediaRecorder(stream);
-                    mediaRecorderRef.current = recorder;
-                    audioChunksRef.current = [];
-                    recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
-                    recorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        setRecordings(prev => ({ ...prev, [id]: audioUrl }));
-                        stream.getTracks().forEach(track => track.stop());
-                    };
-                    recorder.start();
-                    setRecordingState(id);
-                } catch (err) { alert("Necesitas permitir acceso al micrófono para grabar."); }
-            };
-
-            const stopRecording = () => { if (mediaRecorderRef.current) { mediaRecorderRef.current.stop(); setRecordingState(null); } };
-            const playRecording = (id) => { if (recordings[id]) { new Audio(recordings[id]).play(); } };
-
+        function PhoneticsModule({ playAudio, theme, isFullscreen, toggleFullscreen, recordings, playRecording, recordingState, startRecording, stopRecording }) {
             const SoundCard = ({ item, idPrefix }) => {
-                const cardId = `${idPrefix}-${item.id || item.letter || item.L}`;
+                const label = item.L || item.letter;
+                const cardId = `${idPrefix}-${label}`;
                 return (
-                    <div className={`p-4 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center ${theme.cardBg} ${theme.cardHover}`}>
-                        <span className={`text-4xl font-black block text-center mb-1 mt-2 text-white`}>{item.letter || item.L}</span>
-                        <span className="text-indigo-400 font-mono text-sm block text-center mb-2">{item.s}</span>
-                        <p className={`text-[10px] text-center mb-4 h-8 leading-tight ${theme.textMuted}`}>{item.desc}</p>
-                        <div className="grid grid-cols-2 gap-2 w-full mt-auto">
-                            <button onClick={() => playAudio(item.audio || item.sound || item.L)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnAccent}`}>Sonido</button>
-                            <button onClick={() => playAudio(item.w)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnPrimary}`}>Palabra</button>
-                            <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordingState === cardId ? 'bg-rose-500 text-white animate-pulse' : theme.btnDanger}`}>
-                                {recordingState === cardId ? 'Fin' : 'Grabar'}
+                    <div className={`p-6 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center ${theme.cardBg} ${theme.cardHover}`}>
+                        <span className={`text-5xl font-black block text-center mb-1 mt-2 text-white`}>{label}</span>
+                        <span className="text-indigo-400 font-mono text-xl block text-center mb-2">{item.s}</span>
+                        <p className={`text-xs text-center mb-6 h-10 leading-tight font-medium ${theme.textMuted}`}>{item.desc}</p>
+
+                        <div className="grid grid-cols-2 gap-3 w-full mb-4">
+                            <button onClick={() => playAudio(item.sound, 'en-US')} className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest ${theme.btnPrimary}`}>Inglés</button>
+                            <button onClick={() => playAudio(item.letter || item.L, 'es-MX')} className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest ${theme.btnSecondary}`}>Español</button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 w-full">
+                            <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
+                                className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : theme.btnDanger}`}>
+                                {recordingState === cardId ? 'Stop' : 'Grabar'}
                             </button>
-                            <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordings[cardId] ? theme.btnSecondary : 'opacity-20 cursor-not-allowed'}`}>Mi Voz</button>
+                            <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]}
+                                className={`p-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${recordings[cardId] ? theme.btnAccent : 'opacity-20 cursor-not-allowed'}`}>
+                                Mi Voz
+                            </button>
                         </div>
                     </div>
                 );
@@ -349,8 +357,8 @@
                 <div className="animate-fade-in pb-10">
                     <div className="flex justify-between items-start mb-8">
                         <div>
-                            <h2 className={`text-4xl font-black flex items-center gap-3 text-white`}><Icon className="text-rose-500" name="mic" /> Laboratorio</h2>
-                            <p className={`mt-2 ${theme.textMuted}`}>Aprende los sonidos fundamentales y graba tu propia voz.</p>
+                            <h2 className={`text-4xl font-black flex items-center gap-3 text-white`}><Icon className="text-rose-500" name="mic" /> Centro de Sonidos</h2>
+                            <p className={`mt-2 ${theme.textMuted}`}>Entrena tu oído con la pronunciación nativa y grabaciones propias.</p>
                         </div>
                         <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400`}>
                             {isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}
@@ -359,30 +367,30 @@
 
                     <div className="space-y-16">
                         <section>
-                            <h3 className={`text-xl font-bold text-amber-500 border-l-4 border-amber-500 pl-4 mb-6`}>Abecedario Completo</h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
+                            <h3 className={`text-xl font-black text-amber-500 border-l-4 border-amber-500 pl-4 mb-8 uppercase tracking-widest`}>Abecedario</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                                {phoneticData.alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className={`text-xl font-bold text-rose-500 border-l-4 border-rose-500 pl-4 mb-6`}>Vocales Cortas</h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {shortVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="short" />)}
+                            <h3 className={`text-xl font-black text-rose-500 border-l-4 border-rose-500 pl-4 mb-8 uppercase tracking-widest`}>Vocal Corta</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                                {phoneticData.shortVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="short" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className={`text-xl font-bold text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-6`}>Vocales Largas</h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {longVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="long" />)}
+                            <h3 className={`text-xl font-black text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-8 uppercase tracking-widest`}>Vocal Larga</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                                {phoneticData.longVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="long" />)}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className={`text-xl font-bold text-violet-500 border-l-4 border-violet-500 pl-4 mb-6`}>Letras Engañosas y Combinaciones</h3>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {trickySounds.map(item => <SoundCard key={item.id || item.letter} item={item} idPrefix="tricky" />)}
+                            <h3 className={`text-xl font-black text-violet-500 border-l-4 border-violet-500 pl-4 mb-8 uppercase tracking-widest`}>Retos Fonéticos</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                                {phoneticData.trickySounds.map((item, i) => <SoundCard key={i} item={item} idPrefix="tricky" />)}
                             </div>
                         </section>
                     </div>
@@ -781,7 +789,7 @@
             );
         }
 
-        function DatabaseManager({ db, setDb, theme, showToast }) {
+        function DatabaseManager({ db, setDb, theme, showToast, recordings, playRecording, recordingState, startRecording, stopRecording }) {
             const [newWord, setNewWord] = useState({ en: '', es: '', pron: '', emoji: '', category: 'Varios' });
 
             const handleAdd = () => {
@@ -792,50 +800,84 @@
             };
 
             return (
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto pb-20">
                     <div className="flex justify-between items-center mb-8">
-                        <h2 className={`text-3xl font-black text-white`}>Mi Base de Datos</h2>
+                        <h2 className={`text-3xl font-black text-white`}>Gestión de Recursos 🛠️</h2>
                     </div>
 
                     <div className={`p-6 mb-8 rounded-3xl border border-zinc-800 ${theme.cardBg}`}>
-                        <h3 className="text-indigo-400 font-black uppercase text-xs tracking-widest mb-4">Añadir Palabra Manual</h3>
+                        <h3 className="text-indigo-400 font-black uppercase text-xs tracking-widest mb-4">Añadir Palabra</h3>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                            <input value={newWord.en} onChange={e => setNewWord({ ...newWord, en: e.target.value })} placeholder="Inglés (ej: Cat)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
-                            <input value={newWord.es} onChange={e => setNewWord({ ...newWord, es: e.target.value })} placeholder="Español (ej: Gato)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
-                            <input value={newWord.pron} onChange={e => setNewWord({ ...newWord, pron: e.target.value })} placeholder="Pronun. (ej: kat)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
-                            <input value={newWord.emoji} onChange={e => setNewWord({ ...newWord, emoji: e.target.value })} placeholder="Emoji (ej: 🐈)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.en} onChange={e => setNewWord({ ...newWord, en: e.target.value })} placeholder="Inglés" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.es} onChange={e => setNewWord({ ...newWord, es: e.target.value })} placeholder="Español" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.pron} onChange={e => setNewWord({ ...newWord, pron: e.target.value })} placeholder="Pronun." className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.emoji} onChange={e => setNewWord({ ...newWord, emoji: e.target.value })} placeholder="Emoji" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
                             <button onClick={handleAdd} className={`px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${theme.btnPrimary}`}>
                                 <Icon name="plus-circle" size={18} /> Añadir
                             </button>
                         </div>
                     </div>
 
-                    <div className={`rounded-[2.5rem] border overflow-hidden shadow-2xl transition-all ${theme.cardBg} border-zinc-800`}>
-                        <div className="overflow-x-auto h-[500px] overflow-y-auto">
-                            <table className="w-full text-left relative">
-                                <thead className="bg-zinc-950 sticky top-0 z-10 shadow-md">
-                                    <tr>
-                                        <th className="p-6 font-black text-indigo-400 uppercase text-xs tracking-[0.2em]">Inglés</th>
-                                        <th className="p-6 font-black text-emerald-500 uppercase text-xs tracking-[0.2em]">Español</th>
-                                        <th className="p-6 font-black text-amber-500 uppercase text-xs tracking-[0.2em]">Sonido</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {db.map(w => (
-                                        <tr key={w.id} className="border-t border-zinc-800/50 hover:bg-indigo-500/5 transition-colors group">
-                                            <td className="p-6 font-bold flex items-center gap-4 text-white">
-                                                <span className="text-2xl group-hover:scale-125 transition-transform duration-300">{w.emoji}</span>
-                                                <div className="flex flex-col">
-                                                    <span className="text-lg">{w.en}</span>
-                                                    <span className="text-[10px] text-zinc-600 font-normal uppercase tracking-widest">{w.category}</span>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 className="text-emerald-500 font-black uppercase text-xs tracking-widest mb-6 border-l-4 border-emerald-500 pl-3">Vocabulario</h3>
+                            <div className={`rounded-3xl border overflow-hidden shadow-2xl transition-all ${theme.cardBg} border-zinc-800`}>
+                                <div className="h-[600px] overflow-y-auto">
+                                    <table className="w-full text-left relative">
+                                        <thead className="bg-zinc-950 sticky top-0 z-10">
+                                            <tr>
+                                                <th className="p-4 font-black text-indigo-400 uppercase text-[10px]">Palabra</th>
+                                                <th className="p-4 font-black text-emerald-500 uppercase text-[10px]">Español</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {db.map(w => (
+                                                <tr key={w.id} className="border-t border-zinc-800/50 hover:bg-white/5 group">
+                                                    <td className="p-4 flex items-center gap-3 text-sm font-bold text-white">
+                                                        <span className="text-xl">{w.emoji}</span>
+                                                        <div className="flex flex-col"><span className="text-white">{w.en}</span><span className="text-[9px] text-zinc-500 uppercase tracking-widest">{w.category}</span></div>
+                                                    </td>
+                                                    <td className="p-4 text-xs text-zinc-400">{w.es}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 className="text-amber-500 font-black uppercase text-xs tracking-widest mb-6 border-l-4 border-amber-500 pl-3">Banco de Sonidos (Phonetics)</h3>
+                            <div className={`rounded-3xl border overflow-hidden shadow-2xl transition-all ${theme.cardBg} border-zinc-800 p-4`}>
+                                <div className="h-[600px] overflow-y-auto space-y-4 pr-2">
+                                    {[...phoneticData.alphabet, ...phoneticData.shortVowels, ...phoneticData.longVowels, ...phoneticData.trickySounds].map((item, i) => {
+                                        const label = item.L || item.letter;
+                                        const idPrefix = phoneticData.alphabet.includes(item) ? 'abc' : phoneticData.shortVowels.includes(item) ? 'short' : phoneticData.longVowels.includes(item) ? 'long' : 'tricky';
+                                        const cardId = `${idPrefix}-${label}`;
+                                        return (
+                                            <div key={i} className="bg-zinc-950/50 p-4 rounded-2xl flex items-center justify-between border border-zinc-800 group hover:border-amber-500/30 transition-all">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-2xl font-black text-white w-8">{label}</span>
+                                                    <div>
+                                                        <p className="text-amber-500 font-mono text-xs">{item.s}</p>
+                                                        <p className="text-[10px] text-zinc-600 italic">{item.desc.substring(0, 30)}...</p>
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td className="p-6 text-zinc-400 font-medium">{w.es}</td>
-                                            <td className="p-6 font-mono text-sm text-indigo-400/80 tracking-widest">/{w.pron}/</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)}
+                                                        className={`p-2 rounded-lg transition-all ${recordingState === cardId ? 'bg-rose-600 text-white animate-pulse' : 'bg-zinc-800 text-zinc-400 hover:text-rose-500'}`}>
+                                                        <Icon name={recordingState === cardId ? 'square' : 'mic'} size={14} />
+                                                    </button>
+                                                    <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]}
+                                                        className={`p-2 rounded-lg transition-all ${recordings[cardId] ? 'bg-amber-600 text-white' : 'bg-zinc-800 text-zinc-400 opacity-20'}`}>
+                                                        <Icon name="play" size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
