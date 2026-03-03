@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Play</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'pop-in': 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        popIn: { '0%': { opacity: '0', transform: 'scale(0.9)' }, '100%': { opacity: '1', transform: 'scale(1)' } }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-black text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const Icon = ({ name, className = "", size = 24 }) => {
+            const spanRef = useRef(null);
+            useEffect(() => {
+                if (spanRef.current && window.lucide) {
+                    spanRef.current.innerHTML = `<i data-lucide="${name}" style="width: ${size}px; height: ${size}px;"></i>`;
+                    window.lucide.createIcons();
+                }
+            }, [name, size]);
+            return <span ref={spanRef} className={`inline-flex items-center justify-center ${className}`}></span>;
+        };
+
+        const initialDB = [
+            { id: 1, en: "Hello", es: "Hola", pron: "hélou", emoji: "👋", category: "Saludos" },
+            { id: 2, en: "Hi", es: "Hola (informal)", pron: "jai", emoji: "🙋", category: "Saludos" },
+            { id: 3, en: "Goodbye", es: "Adiós", pron: "gudbái", emoji: "👋", category: "Saludos" },
+            { id: 4, en: "Bye", es: "Chau", pron: "bai", emoji: "👋", category: "Saludos" },
+            { id: 5, en: "Please", es: "Por favor", pron: "plis", emoji: "🙏", category: "Expresiones" },
+            { id: 6, en: "Thank you", es: "Gracias", pron: "zank iu", emoji: "🙌", category: "Expresiones" },
+            { id: 7, en: "You're welcome", es: "De nada", pron: "iur uélcom", emoji: "🤝", category: "Expresiones" },
+            { id: 8, en: "Sorry", es: "Perdón", pron: "sóri", emoji: "😔", category: "Expresiones" },
+            { id: 9, en: "Yes", es: "Sí", pron: "ies", emoji: "✅", category: "Expresiones" },
+            { id: 10, en: "No", es: "No", pron: "nou", emoji: "❌", category: "Expresiones" },
+            { id: 11, en: "I", es: "Yo", pron: "ai", emoji: "🙋", category: "Pronombres" },
+            { id: 12, en: "You", es: "Tú", pron: "iu", emoji: "👉", category: "Pronombres" },
+            { id: 13, en: "He", es: "Él", pron: "ji", emoji: "👨", category: "Pronombres" },
+            { id: 14, en: "She", es: "Ella", pron: "shi", emoji: "👩", category: "Pronombres" },
+            { id: 15, en: "It", es: "Eso", pron: "it", emoji: "📦", category: "Pronombres" },
+            { id: 16, en: "We", es: "Nosotros", pron: "ui", emoji: "👨‍👩‍👧‍👦", category: "Pronombres" },
+            { id: 17, en: "They", es: "Ellos", pron: "zei", emoji: "👥", category: "Pronombres" },
+            { id: 18, en: "One", es: "Uno", pron: "uan", emoji: "1️⃣", category: "Números" },
+            { id: 19, en: "Two", es: "Dos", pron: "tu", emoji: "2️⃣", category: "Números" },
+            { id: 20, en: "Three", es: "Tres", pron: "zri", emoji: "3️⃣", category: "Números" },
+            { id: 21, en: "Red", es: "Rojo", pron: "red", emoji: "🔴", category: "Colores" },
+            { id: 22, en: "Blue", es: "Azul", pron: "blu", emoji: "🔵", category: "Colores" },
+            { id: 23, en: "Green", es: "Verde", pron: "grin", emoji: "🟢", category: "Colores" },
+            { id: 24, en: "Yellow", es: "Amarillo", pron: "iélo", emoji: "🟡", category: "Colores" },
+            { id: 25, en: "Black", es: "Negro", pron: "blak", emoji: "⚫", category: "Colores" },
+            { id: 26, en: "White", es: "Blanco", pron: "uait", emoji: "⚪", category: "Colores" },
+            { id: 27, en: "Big", es: "Grande", pron: "big", emoji: "🐘", category: "Adjetivos" },
+            { id: 28, en: "Small", es: "Pequeño", pron: "smol", emoji: "🐁", category: "Adjetivos" },
+            { id: 29, en: "Good", es: "Bueno", pron: "gud", emoji: "👍", category: "Adjetivos" },
+            { id: 30, en: "Bad", es: "Malo", pron: "bád", emoji: "👎", category: "Adjetivos" },
+            { id: 31, en: "Happy", es: "Feliz", pron: "jápi", emoji: "😊", category: "Adjetivos" },
+            { id: 32, en: "Sad", es: "Triste", pron: "sád", emoji: "😢", category: "Adjetivos" },
+            { id: 33, en: "Mother", es: "Madre", pron: "máder", emoji: "👩", category: "Familia" },
+            { id: 34, en: "Father", es: "Padre", pron: "fáder", emoji: "👨", category: "Familia" },
+            { id: 35, en: "Friend", es: "Amigo", pron: "frend", emoji: "🤝", category: "Familia" },
+            { id: 36, en: "Monday", es: "Lunes", pron: "mándei", emoji: "📅", category: "Fechas" },
+            { id: 37, en: "Today", es: "Hoy", pron: "todei", emoji: "📍", category: "Fechas" },
+            { id: 38, en: "Be", es: "Ser/Estar", pron: "bi", emoji: "✨", category: "Verbos" },
+            { id: 39, en: "Have", es: "Tener", pron: "jav", emoji: "🤲", category: "Verbos" },
+            { id: 40, en: "Do", es: "Hacer", pron: "du", emoji: "🛠️", category: "Verbos" },
+            { id: 41, en: "Go", es: "Ir", pron: "gou", emoji: "🏃", category: "Verbos" },
+            { id: 42, en: "Come", es: "Venir", pron: "kam", emoji: "🚶", category: "Verbos" },
+            { id: 43, en: "See", es: "Ver", pron: "si", emoji: "👁️", category: "Verbos" },
+            { id: 44, en: "Want", es: "Querer", pron: "uónt", emoji: "❤️", category: "Verbos" },
+            { id: 45, en: "Play", es: "Jugar", pron: "plei", emoji: "🎮", category: "Verbos" },
+            { id: 46, en: "Eat", es: "Comer", pron: "it", emoji: "🍽️", category: "Verbos" },
+            { id: 47, en: "Drink", es: "Beber", pron: "drink", emoji: "🥤", category: "Verbos" },
+            { id: 48, en: "House", es: "Casa", pron: "haus", emoji: "🏠", category: "Sustantivos" },
+            { id: 49, en: "Water", es: "Agua", pron: "uóter", emoji: "💧", category: "Sustantivos" },
+            { id: 50, en: "Food", es: "Comida", pron: "fud", emoji: "🍲", category: "Sustantivos" },
+            { id: 51, en: "Bread", es: "Pan", pron: "bred", emoji: "🍞", category: "Sustantivos" },
+            { id: 52, en: "Apple", es: "Manzana", pron: "ápol", emoji: "🍎", category: "Sustantivos" },
+            { id: 53, en: "Banana", es: "Banano", pron: "banána", emoji: "🍌", category: "Sustantivos" },
+            { id: 54, en: "Head", es: "Cabeza", pron: "jed", emoji: "👤", category: "Cuerpo" },
+            { id: 55, en: "Hand", es: "Mano", pron: "jánd", emoji: "✋", category: "Cuerpo" },
+            { id: 56, en: "Time", es: "Hora", pron: "taim", emoji: "⏰", category: "Tiempo" },
+            { id: 57, en: "Day", es: "Día", pron: "dei", emoji: "☀️", category: "Tiempo" },
+            { id: 58, en: "Night", es: "Noche", pron: "nait", emoji: "🌙", category: "Tiempo" },
+            { id: 59, en: "Love", es: "Amar", pron: "lav", emoji: "❤️", category: "Verbos" },
+            { id: 60, en: "Like", es: "Gustar", pron: "laik", emoji: "👍", category: "Verbos" },
+            { id: 61, en: "Need", es: "Necesitar", pron: "nid", emoji: "🛒", category: "Verbos" },
+            { id: 62, en: "Walk", es: "Caminar", pron: "uok", emoji: "🚶", category: "Verbos" },
+            { id: 63, en: "What", es: "Qué", pron: "uot", emoji: "❓", category: "Preguntas" },
+            { id: 64, en: "Where", es: "Dónde", pron: "uer", emoji: "📍", category: "Preguntas" },
+            { id: 65, en: "When", es: "Cuándo", pron: "uen", emoji: "⏳", category: "Preguntas" },
+            { id: 66, en: "Who", es: "Quién", pron: "ju", emoji: "👤", category: "Preguntas" },
+            { id: 67, en: "Why", es: "Por qué", pron: "uai", emoji: "🤷", category: "Preguntas" },
+            { id: 68, en: "How", es: "Cómo", pron: "jau", emoji: "🤔", category: "Preguntas" }
+        ];
+
+        function App() {
+            const [db, setDb] = useState(initialDB);
+            const [currentTab, setCurrentTab] = useState('phonetics');
+            const [toast, setToast] = useState(null);
+            const [isDark, setIsDark] = useState(true);
+            const [isFullscreen, setIsFullscreen] = useState(false);
+            const appRef = useRef(null);
+
+            // Icon effect is handled in the Icon component directly
+
+            const toggleFullscreen = () => {
+                if (!isFullscreen) {
+                    if (appRef.current.requestFullscreen) appRef.current.requestFullscreen().catch(() => setIsFullscreen(true));
+                    else setIsFullscreen(true);
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen().catch(() => setIsFullscreen(false));
+                    else setIsFullscreen(false);
+                }
+            };
+
+            const playAudio = (text, requestedLang = 'en-US') => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    const isSpanish = db.some(word => word.es.toLowerCase() === text.toLowerCase()) || requestedLang === 'es-MX' || requestedLang === 'es-ES';
+                    let targetLang = isSpanish ? 'es-MX' : 'en-US';
+                    utterance.lang = targetLang;
+                    utterance.rate = 0.85;
+
+                    const setVoiceAndSpeak = () => {
+                        const voices = window.speechSynthesis.getVoices();
+                        let voice = null;
+                        if (isSpanish) {
+                            voice = voices.find(v => v.lang === 'es-MX' && v.name.includes('Google')) || voices.find(v => v.lang === 'es-MX') || voices.find(v => v.lang.startsWith('es'));
+                        } else {
+                            voice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google')) || voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang.startsWith('en'));
+                        }
+                        if (voice) utterance.voice = voice;
+                        window.speechSynthesis.speak(utterance);
+                    };
+
+                    if (window.speechSynthesis.getVoices().length === 0) {
+                        window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+                    } else {
+                        setVoiceAndSpeak();
+                    }
+                } else {
+                    showToast("Tu navegador no soporta lectura de voz.");
+                }
+            };
+
+            const showToast = (msg) => {
+                setToast(msg);
+                setTimeout(() => setToast(null), 3000);
+            };
+
+            const theme = {
+                bgApp: isDark ? 'bg-black text-slate-100' : 'bg-slate-50 text-slate-800',
+                navBg: isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-slate-200',
+                cardBg: isDark ? 'bg-zinc-900 border-zinc-800 shadow-xl' : 'bg-white border-slate-200 shadow-sm',
+                cardHover: isDark ? 'hover:bg-zinc-800 hover:border-indigo-500/50' : 'hover:bg-slate-50 hover:border-slate-300',
+                textMuted: isDark ? 'text-zinc-500' : 'text-slate-500',
+                textBold: isDark ? 'text-white' : 'text-slate-800',
+                inputBg: isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-800',
+                btnPrimary: 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-95 transition-all',
+                btnSecondary: isDark ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 active:scale-95 transition-all' : 'bg-slate-200 hover:bg-slate-300 text-slate-800 active:scale-95 transition-all',
+                btnAccent: 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-500/20 active:scale-95 transition-all',
+                btnDanger: isDark ? 'bg-rose-900/30 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-900/50' : 'bg-rose-100 hover:bg-rose-600 text-rose-600 hover:text-white active:scale-95 transition-all'
+            };
+
+            return (
+                <div ref={appRef} className={`min-h-screen font-sans transition-colors duration-300 ${isFullscreen ? 'fixed inset-0 z-[100] w-screen h-screen overflow-y-auto bg-black' : 'pb-20 md:pb-0 md:pl-64'} ${theme.bgApp}`}>
+                    {toast && (
+                        <div className="fixed top-4 right-4 z-[110] bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-2 animate-bounce border border-indigo-400">
+                            <Icon name="check-circle-2" size={20} /> {toast}
+                        </div>
+                    )}
+
+                    <nav className={`${isFullscreen ? 'hidden' : 'fixed bottom-0 left-0 w-full border-t md:w-64 md:h-screen md:border-t-0 md:border-r flex md:flex-col overflow-x-auto whitespace-nowrap p-2 md:p-4 z-40 transition-colors duration-300'} ${theme.navBg}`}>
+                        <div className="hidden md:block mb-8 mt-4 text-center">
+                            <h1 className="text-2xl font-bold text-indigo-500">English<span className="text-amber-500">Play</span></h1>
+                            <p className={`text-xs mt-1 ${theme.textMuted}`}>Offline Mode</p>
+                        </div>
+                        <NavButton icon={<Icon name="mic" />} label="0. Sonidos" active={currentTab === 'phonetics'} onClick={() => setCurrentTab('phonetics')} theme={theme} isDark={isDark} />
+                        <NavButton icon={<Icon name="volume-2" />} label="1. Pronunciar" active={currentTab === 'pronunciation'} onClick={() => setCurrentTab('pronunciation')} theme={theme} isDark={isDark} />
+                        <NavButton icon={<Icon name="brain" />} label="2. Visual" active={currentTab === 'visual'} onClick={() => setCurrentTab('visual')} theme={theme} isDark={isDark} />
+                        <NavButton icon={<Icon name="puzzle" />} label="3. Lego" active={currentTab === 'lego'} onClick={() => setCurrentTab('lego')} theme={theme} isDark={isDark} />
+                        <NavButton icon={<Icon name="message-square" />} label="4. Chatbot" active={currentTab === 'chat'} onClick={() => setCurrentTab('chat')} theme={theme} isDark={isDark} />
+                        <div className="md:mt-auto">
+                            <NavButton icon={<Icon name="database" />} label="Mi DB" active={currentTab === 'database'} onClick={() => setCurrentTab('database')} isHighlight theme={theme} isDark={isDark} />
+                            <button onClick={() => setIsDark(!isDark)} className="w-full mt-2 flex items-center justify-center p-3 rounded-xl hover:bg-zinc-900 transition-colors text-zinc-500">
+                                {isDark ? <Icon name="sun" size={20} /> : <Icon name="moon" size={20} />}
+                            </button>
+                        </div>
+                    </nav>
+
+                    <main className={`p-4 transition-all duration-300 ${isFullscreen ? 'w-full max-w-5xl mx-auto py-10' : 'md:p-8 max-w-5xl mx-auto'}`}>
+                        {currentTab === 'phonetics' && <PhoneticsModule playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'pronunciation' && <PronunciationGym db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'visual' && <VisualGame db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'lego' && <LegoGame db={db} playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                        {currentTab === 'chat' && <ChatModule db={db} playAudio={playAudio} theme={theme} isDark={isDark} />}
+                        {currentTab === 'database' && <DatabaseManager db={db} setDb={setDb} showToast={showToast} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                    </main>
+                </div>
+            );
+        }
+
+        function NavButton({ icon, label, active, onClick, isHighlight, isDark, theme }) {
+            const activeClass = isDark ? 'bg-indigo-900/40 text-indigo-400 border border-indigo-500/30 shadow-lg' : 'bg-indigo-100 text-indigo-700';
+            const inactiveClass = isDark ? 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-900' : 'text-slate-500 hover:bg-slate-100';
+            const highlightClass = isDark ? (active ? 'bg-amber-900/40 text-amber-400 border border-amber-500/30' : 'text-amber-500 hover:bg-zinc-900') : (active ? 'bg-amber-100 text-amber-800' : 'bg-amber-50 text-amber-700');
+            return (
+                <button onClick={onClick} className={`flex flex-col md:flex-row items-center gap-1 md:gap-3 p-2 md:p-3 rounded-2xl transition-all w-full mb-1 ${active ? activeClass : inactiveClass} ${isHighlight ? highlightClass : ''}`}>
+                    <div className={`${active ? 'scale-110' : ''} transition-transform`}>{icon}</div>
+                    <span className="text-[10px] md:text-sm font-bold tracking-tight">{label}</span>
+                </button>
+            );
+        }
+
+        // --- MÓDULO: LABORATORIO DE SONIDOS ---
+        function PhoneticsModule({ playAudio, theme, isDark, isFullscreen, toggleFullscreen }) {
+            const [recordings, setRecordings] = useState({});
+            const [recordingState, setRecordingState] = useState(null);
+            const mediaRecorderRef = useRef(null);
+            const audioChunksRef = useRef([]);
+
+            const alphabet = [
+                { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'ah', desc: 'Nombre: "ei". Sonido: "a" abierta.' },
+                { L: 'B', s: '/biː/', w: 'Banana', sound: 'buh', desc: 'Nombre: "bi". Sonido: "b" explosiva.' },
+                { L: 'C', s: '/siː/', w: 'Cat', sound: 'kuh', desc: 'Nombre: "si". Sonido: "k" fuerte.' },
+                { L: 'D', s: '/diː/', w: 'Dog', sound: 'duh', desc: 'Nombre: "di". Sonido: "d" dental.' },
+                { L: 'E', s: '/iː/', w: 'Elephant', sound: 'eh', desc: 'Nombre: "i". Sonido: "e" seca.' },
+                { L: 'F', s: '/ef/', w: 'Fish', sound: 'fff', desc: 'Nombre: "ef". Sonido: soplo dental.' },
+                { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'guh', desc: 'Nombre: "yi". Sonido: "g" de gato.' },
+                { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'hhh', desc: 'Nombre: "eich". Sonido: aire suave.' },
+                { L: 'I', s: '/aɪ/', w: 'Ice', sound: 'ih', desc: 'Nombre: "ai". Sonido: "i" corta.' },
+                { L: 'J', s: '/dʒeɪ/', w: 'Juice', sound: 'yuh', desc: 'Nombre: "yei". Sonido: "y" fuerte.' },
+                { L: 'K', s: '/keɪ/', w: 'Key', sound: 'kuh', desc: 'Nombre: "kei". Sonido: "k" seca.' },
+                { L: 'L', s: '/el/', w: 'Lion', sound: 'lll', desc: 'Nombre: "el". Sonido: lengua arriba.' },
+                { L: 'M', s: '/em/', w: 'Monkey', sound: 'mmm', desc: 'Nombre: "em". Sonido: labios cerrados.' },
+                { L: 'N', s: '/en/', w: 'New', sound: 'nnn', desc: 'Nombre: "en". Sonido: nasal.' },
+                { L: 'O', s: '/oʊ/', w: 'Old', sound: 'oh', desc: 'Nombre: "ou". Sonido: "o" redonda.' },
+                { L: 'P', s: '/piː/', w: 'Pig', sound: 'puh', desc: 'Nombre: "pi". Sonido: explosión "p".' },
+                { L: 'Q', s: '/kjuː/', w: 'Queen', sound: 'kwuh', desc: 'Nombre: "kiu". Sonido: "kw".' },
+                { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'rrr', desc: 'Nombre: "ar". Sonido: lengua curva.' },
+                { L: 'S', s: '/es/', w: 'Sad', sound: 'sss', desc: 'Nombre: "es". Sonido: siseo.' },
+                { L: 'T', s: '/tiː/', w: 'Time', sound: 'tuh', desc: 'Nombre: "ti". Sonido: golpe "t".' },
+                { L: 'U', s: '/juː/', w: 'Ugly', sound: 'uh', desc: 'Nombre: "iu". Sonido: "u" gutural.' },
+                { L: 'V', s: '/viː/', w: 'Very', sound: 'vvv', desc: 'Nombre: "vi". Sonido: vibración "v".' },
+                { L: 'W', s: '/ˈdʌbəl.juː/', w: 'Water', sound: 'wuh', desc: 'Nombre: "doble u". Sonido: aire.' },
+                { L: 'X', s: '/eks/', w: 'X-ray', sound: 'eks', desc: 'Nombre: "eks". Sonido: "ks".' },
+                { L: 'Y', s: '/waɪ/', w: 'Yellow', sound: 'yuh', desc: 'Nombre: "wai". Sonido: "y" suave.' },
+                { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'zzz', desc: 'Nombre: "zi". Sonido: abeja.' }
+            ];
+
+            const shortVowels = [
+                { letter: 'A', s: '/æ/', w: 'Cat', sound: 'ah', desc: 'Boca muy abierta, como sonriendo.' },
+                { letter: 'E', s: '/e/', w: 'Bed', sound: 'eh', desc: 'Corta, seca y rápida.' },
+                { letter: 'I', s: '/ɪ/', w: 'Pig', sound: 'ih', desc: 'Relajada, sonido entre I y E.' },
+                { letter: 'O', s: '/ɒ/', w: 'Dog', sound: 'o', desc: 'Labios redondos, casi una "a".' },
+                { letter: 'U', s: '/ʌ/', w: 'Up', sound: 'uh', desc: 'Sonido gutural, como un golpe.' }
+            ];
+
+            const longVowels = [
+                { letter: 'A', s: '/eɪ/', w: 'Cake', sound: 'ay', desc: 'Suena como "ei".' },
+                { letter: 'E', s: '/iː/', w: 'Tree', sound: 'ee', desc: 'Suena como una "i" larga y tensa.' },
+                { letter: 'I', s: '/aɪ/', w: 'Ice', sound: 'eye', desc: 'Suena como "ai".' },
+                { letter: 'O', s: '/oʊ/', w: 'Bone', sound: 'oh', desc: 'Suena como "ou".' },
+                { letter: 'U', s: '/juː/', w: 'Use', sound: 'you', desc: 'Suena como "iu" (you).' }
+            ];
+
+            const trickySounds = [
+                { letter: 'C (Suave)', s: '/s/', w: 'City', sound: 'sss', desc: 'Suena como S antes de E, I, Y.' },
+                { letter: 'G (Suave)', s: '/dʒ/', w: 'Gym', sound: 'juh', desc: 'Suena como J inglesa antes de E, I, Y.' },
+                { letter: 'CH', s: '/tʃ/', w: 'Cheese', sound: 'ch ch ch', desc: 'Explosión corta, como "ch" española.' },
+                { letter: 'SH', s: '/ʃ/', w: 'Shoe', sound: 'sh sh sh', desc: 'Siseo suave, como pedir silencio.' },
+                { letter: 'TH (Sordo)', s: '/θ/', w: 'Think', sound: 'th th th', desc: 'Aire entre los dientes (Z de España).' },
+                { letter: 'TH (Sonoro)', s: '/ð/', w: 'This', sound: 'the the the', desc: 'Vibra entre los dientes (como la D).' },
+                { letter: 'PH', s: '/f/', w: 'Phone', sound: 'f f f', desc: 'Suena exactamente igual que la F.' },
+                { letter: 'KN', s: '/n/', w: 'Knife', sound: 'nnn', desc: 'La K es muda, solo suena la N.' },
+                { letter: 'WR', s: '/r/', w: 'Write', sound: 'rrr', desc: 'La W es muda, solo suena la R.' },
+                { letter: 'GH', s: '/f/ o -', w: 'Laugh', sound: 'fff', desc: 'A veces suena F, a veces es muda (High).' },
+                { letter: 'OO', id: 'oo-short', s: '/ʊ/', w: 'Book', sound: 'uh', desc: 'Una "u" muy relajada y rápida.' },
+                { letter: 'OO', id: 'oo-long', s: '/uː/', w: 'Moon', sound: 'ooo', desc: 'Como una "u" larga y con trompa.' }
+            ];
+
+            const startRecording = async (id) => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const recorder = new MediaRecorder(stream);
+                    mediaRecorderRef.current = recorder;
+                    audioChunksRef.current = [];
+                    recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+                    recorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        setRecordings(prev => ({ ...prev, [id]: audioUrl }));
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+                    recorder.start();
+                    setRecordingState(id);
+                } catch (err) { alert("Necesitas permitir acceso al micrófono para grabar."); }
+            };
+
+            const stopRecording = () => { if (mediaRecorderRef.current) { mediaRecorderRef.current.stop(); setRecordingState(null); } };
+            const playRecording = (id) => { if (recordings[id]) { new Audio(recordings[id]).play(); } };
+
+            const SoundCard = ({ item, idPrefix }) => {
+                const cardId = `${idPrefix}-${item.id || item.letter || item.L}`;
+                return (
+                    <div className={`p-4 rounded-3xl border transition-all duration-300 relative group flex flex-col items-center ${theme.cardBg} ${theme.cardHover}`}>
+                        <span className={`text-4xl font-black block text-center mb-1 mt-2 text-white`}>{item.letter || item.L}</span>
+                        <span className="text-indigo-400 font-mono text-sm block text-center mb-2">{item.s}</span>
+                        <p className={`text-[10px] text-center mb-4 h-8 leading-tight ${theme.textMuted}`}>{item.desc}</p>
+                        <div className="grid grid-cols-2 gap-2 w-full mt-auto">
+                            <button onClick={() => playAudio(item.audio || item.sound || item.L)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnAccent}`}>Sonido</button>
+                            <button onClick={() => playAudio(item.w)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnPrimary}`}>Palabra</button>
+                            <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordingState === cardId ? 'bg-rose-500 text-white animate-pulse' : theme.btnDanger}`}>
+                                {recordingState === cardId ? 'Fin' : 'Grabar'}
+                            </button>
+                            <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordings[cardId] ? theme.btnSecondary : 'opacity-20 cursor-not-allowed'}`}>Mi Voz</button>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="animate-fade-in pb-10">
+                    <div className="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 className={`text-4xl font-black flex items-center gap-3 text-white`}><Icon className="text-rose-500" name="mic" /> Laboratorio</h2>
+                            <p className={`mt-2 ${theme.textMuted}`}>Aprende los sonidos fundamentales y graba tu propia voz.</p>
+                        </div>
+                        <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400`}>
+                            {isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}
+                        </button>
+                    </div>
+
+                    <div className="space-y-16">
+                        <section>
+                            <h3 className={`text-xl font-bold text-amber-500 border-l-4 border-amber-500 pl-4 mb-6`}>Abecedario Completo</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 className={`text-xl font-bold text-rose-500 border-l-4 border-rose-500 pl-4 mb-6`}>Vocales Cortas</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {shortVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="short" />)}
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 className={`text-xl font-bold text-emerald-500 border-l-4 border-emerald-500 pl-4 mb-6`}>Vocales Largas</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {longVowels.map(item => <SoundCard key={item.letter} item={item} idPrefix="long" />)}
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 className={`text-xl font-bold text-violet-500 border-l-4 border-violet-500 pl-4 mb-6`}>Letras Engañosas y Combinaciones</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {trickySounds.map(item => <SoundCard key={item.id || item.letter} item={item} idPrefix="tricky" />)}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            );
+        }
+
+        // --- OTROS MÓDULOS ---
+        function PronunciationGym({ db, playAudio, theme, isFullscreen, toggleFullscreen }) {
+            const [idx, setIdx] = useState(0);
+            const word = db[idx];
+
+            return (
+                <div className="flex flex-col items-center animate-fade-in max-w-lg mx-auto">
+                    <div className="flex justify-between items-center w-full mb-8">
+                        <h2 className={`text-3xl font-black text-white`}>Pronunciación</h2>
+                        <button onClick={toggleFullscreen} className={`p-3 rounded-2xl ${theme.cardBg} ${theme.textMuted}`}>
+                            {isFullscreen ? <Icon name="minimize" size={20} /> : <Icon name="maximize" size={20} />}
+                        </button>
+                    </div>
+                    <div className={`w-full rounded-[2.5rem] p-12 border-2 transition-all shadow-2xl ${theme.cardBg} border-indigo-500/10 text-center relative overflow-hidden`}>
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                        <div className="text-9xl mb-8 transform hover:scale-110 transition-transform duration-500 drop-shadow-[0_20px_20px_rgba(79,70,229,0.3)]">{word.emoji}</div>
+                        <h3 className={`text-6xl font-black mb-3 text-white`}>{word.en}</h3>
+                        <p className="text-indigo-400 font-mono text-3xl mb-8">/{word.pron}/</p>
+                        <div className="h-px bg-zinc-800 w-full mb-8"></div>
+                        <p className="text-3xl font-medium text-zinc-400">{word.es}</p>
+                        <p className="text-sm font-medium text-zinc-600 uppercase mt-4">{word.category}</p>
+
+                        <div className="flex justify-center gap-4 mt-6">
+                            <button onClick={() => playAudio(word.en)} className="px-4 py-2 bg-indigo-600/20 text-indigo-400 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-600 hover:text-white transition-colors">
+                                <Icon name="volume-2" size={16} /> Inglés
+                            </button>
+                            <button onClick={() => playAudio(word.es, 'es-MX')} className="px-4 py-2 bg-emerald-600/20 text-emerald-400 rounded-xl font-bold flex items-center gap-2 hover:bg-emerald-600 hover:text-white transition-colors">
+                                <Icon name="volume-2" size={16} /> Español
+                            </button>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-8 mt-12">
+                        <button onClick={() => setIdx((idx - 1 + db.length) % db.length)} className={`p-5 rounded-full transition-all ${theme.btnSecondary}`}><Icon name="chevron-left" size={28} /></button>
+                        <button onClick={() => playAudio(word.en)} className={`p-8 rounded-full shadow-2xl transform transition-all hover:scale-110 active:scale-95 ${theme.btnPrimary}`}><Icon name="volume-2" size={48} /></button>
+                        <button onClick={() => setIdx((idx + 1) % db.length)} className={`p-5 rounded-full transition-all ${theme.btnSecondary}`}><Icon name="chevron-right" size={28} /></button>
+                    </div>
+                </div>
+            );
+        }
+
+        function VisualGame({ db, playAudio, theme, isFullscreen, toggleFullscreen }) {
+            const [target, setTarget] = useState(null);
+            const [options, setOptions] = useState([]);
+            const [score, setScore] = useState(0);
+            const [feedback, setFeedback] = useState(null);
+            const [locked, setLocked] = useState(false);
+            const next = () => {
+                setFeedback(null);
+                setLocked(false);
+                const t = db[Math.floor(Math.random() * db.length)];
+                const opts = [t, ...db.filter(x => x.id !== t.id).sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
+                setTarget(t); setOptions(opts);
+                setTimeout(() => playAudio(t.es, 'es-MX'), 500);
+            };
+            useEffect(() => { next(); }, []);
+            if (!target) return null;
+            return (
+                <div className="max-w-md mx-auto animate-fade-in">
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className={`text-3xl font-black text-white`}>Visual</h2>
+                        <div className="flex items-center gap-4">
+                            <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-5 py-2 rounded-full font-black text-sm shadow-xl">SCORE: {score}</span>
+                            <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted}`}>{isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}</button>
+                        </div>
+                    </div>
+                    <div className={`p-12 rounded-[2.5rem] border-2 text-center mb-10 shadow-2xl transition-all duration-500 relative cursor-pointer group ${feedback === 'correct' ? 'border-emerald-500 bg-emerald-900/30' : feedback === 'incorrect' ? 'border-rose-500 bg-rose-900/30' : 'border-zinc-800 ' + theme.cardBg}`} onClick={() => playAudio(target.es, 'es-MX')}>
+                        <Icon name="volume-2" className="absolute top-4 right-4 text-zinc-600 group-hover:text-emerald-400 transition-colors" />
+                        <div className="text-9xl mb-8 animate-bounce-slow drop-shadow-[0_20px_30px_rgba(255,255,255,0.1)]">{target.emoji}</div>
+                        <p className="text-3xl font-black tracking-widest text-emerald-400 uppercase">{target.es}</p>
+                        {feedback === 'correct' && <p className="mt-4 text-2xl font-black text-emerald-400 animate-pop-in">✅ ¡Correcto!</p>}
+                        {feedback === 'incorrect' && <p className="mt-4 text-2xl font-black text-rose-400 animate-pop-in">❌ Intenta de nuevo</p>}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        {options.map(opt => (
+                            <button key={opt.id} disabled={locked} onClick={() => {
+                                if (opt.id === target.id) {
+                                    setScore(s => s + 1);
+                                    setFeedback('correct');
+                                    setLocked(true);
+                                    playAudio("Correct! " + opt.en, 'en-US');
+                                    setTimeout(() => next(), 2000);
+                                } else {
+                                    setFeedback('incorrect');
+                                    playAudio("Incorrect. Try again", 'en-US');
+                                    setTimeout(() => setFeedback(null), 1200);
+                                }
+                            }} className={`p-6 rounded-3xl border-2 font-black text-xl transition-all duration-300 transform active:scale-95 disabled:opacity-60 ${feedback === 'correct' && opt.id === target.id ? 'border-emerald-500 bg-emerald-600 text-white scale-105' : theme.cardBg + ' ' + theme.cardHover + ' border-zinc-800 text-white'} flex justify-between items-center`}>
+                                {opt.en} <Icon name="volume-2" size={16} className="text-indigo-500 opacity-50" />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        function LegoGame({ db, playAudio, theme, isDark, isFullscreen, toggleFullscreen }) {
+            const [selected, setSelected] = useState([]);
+            const [pool, setPool] = useState([]);
+            const [mission, setMission] = useState('');
+            const [missionLang, setMissionLang] = useState('en');
+            const [score, setScore] = useState(0);
+            const [feedback, setFeedback] = useState(null);
+
+            var sentences = [
+                { en: ["I", "want", "a", "banana"], es: ["Yo", "quiero", "una", "banana"] },
+                { en: ["You", "like", "the", "apples"], es: ["A", "ti", "te", "gustan", "las", "manzanas"] },
+                { en: ["He", "needs", "some", "water"], es: ["Él", "necesita", "un", "poco", "de", "agua"] },
+                { en: ["They", "eat", "a", "lot", "of", "bread"], es: ["Ellos", "comen", "mucho", "pan"] },
+                { en: ["We", "drink", "cold", "water"], es: ["Nosotros", "bebemos", "agua", "fría"] },
+                { en: ["She", "likes", "the", "red", "apple"], es: ["A", "ella", "le", "gusta", "la", "manzana", "roja"] },
+                { en: ["I", "see", "a", "big", "red", "dog"], es: ["Yo", "veo", "un", "perro", "rojo", "y", "grande"] },
+                { en: ["You", "need", "good", "food"], es: ["Tú", "necesitas", "buena", "comida"] },
+                { en: ["We", "go", "to", "the", "white", "house"], es: ["Nosotros", "vamos", "a", "la", "casa", "blanca"] },
+                { en: ["He", "is", "very", "happy", "today"], es: ["Él", "está", "muy", "feliz", "hoy"] },
+                { en: ["She", "is", "sad", "at", "night"], es: ["Ella", "está", "triste", "en", "la", "noche"] },
+                { en: ["I", "love", "my", "mother"], es: ["Yo", "amo", "a", "mi", "madre"] },
+                { en: ["My", "father", "wants", "a", "blue", "car"], es: ["Mi", "padre", "quiere", "un", "coche", "azul"] },
+                { en: ["They", "play", "with", "the", "dog"], es: ["Ellos", "juegan", "con", "el", "perro"] }
+            ];
+
+            var distractorsEn = ["sleep", "run", "big", "small", "time", "night", "good", "bad", "walk", "come", "the", "a", "my"];
+            var distractorsEs = ["dormir", "correr", "grande", "pequeño", "hora", "noche", "bueno", "malo", "caminar", "venir", "el", "la", "un", "una", "los", "las"];
+
+            var pickRandom = function (arr) { return arr[Math.floor(Math.random() * arr.length)]; };
+            var shuffle = function (arr) { return arr.slice().sort(function () { return 0.5 - Math.random(); }); };
+
+            var generateSentence = function () {
+                var s = pickRandom(sentences);
+                var isEnToEs = Math.random() > 0.5;
+
+                var missionWords, answerWords, extraPool;
+                if (isEnToEs) {
+                    missionWords = s.en;
+                    answerWords = s.es.slice();
+                    extraPool = distractorsEs;
+                    setMissionLang('en');
+                } else {
+                    missionWords = s.es;
+                    answerWords = s.en.slice();
+                    extraPool = distractorsEn;
+                    setMissionLang('es');
+                }
+
+                setMission(missionWords.join(' '));
+
+                var extras = shuffle(extraPool.filter(function (d) { return answerWords.indexOf(d) === -1; })).slice(0, 4);
+                var allCards = shuffle(answerWords.concat(extras));
+
+                setPool(allCards);
+                setSelected([]);
+                setFeedback(null);
+            };
+
+            useEffect(function () {
+                generateSentence();
+            }, []);
+
+            var checkAnswer = function () {
+                var userAnswer = selected.join(' ');
+                var s = sentences.find(function (item) {
+                    if (missionLang === 'en') return item.en.join(' ') === mission;
+                    return item.es.join(' ') === mission;
+                });
+                if (!s) { generateSentence(); return; }
+
+                var correctAnswer = missionLang === 'en' ? s.es.join(' ') : s.en.join(' ');
+                var answerLang = missionLang === 'en' ? 'es-MX' : 'en-US';
+
+                playAudio(userAnswer, answerLang);
+
+                if (userAnswer === correctAnswer) {
+                    setFeedback('correct');
+                    setScore(function (prev) { return prev + 1; });
+                    setTimeout(function () {
+                        playAudio('Correct!', 'en-US');
+                    }, 1000);
+                    setTimeout(function () {
+                        generateSentence();
+                    }, 2500);
+                } else {
+                    setFeedback('incorrect');
+                    setTimeout(function () {
+                        playAudio('Try again', 'en-US');
+                        setFeedback(null);
+                    }, 1500);
+                }
+            };
+
+            return (
+                <div className="max-w-2xl mx-auto animate-fade-in text-center">
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className={`text-3xl font-black text-white`}>Lego Frases</h2>
+                        <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-5 py-2 rounded-full font-black text-sm shadow-xl">SCORE: {score}</span>
+                    </div>
+
+                    <div className={`p-10 rounded-[2.5rem] mb-10 shadow-2xl border transition-all duration-500 ${feedback === 'correct' ? 'border-emerald-500 bg-emerald-900/30' : feedback === 'incorrect' ? 'border-rose-500 bg-rose-900/30' : 'border-indigo-500/20 ' + theme.cardBg}`}>
+                        <p className="text-indigo-400 text-xs font-black uppercase tracking-widest mb-4">Traduce esta frase:</p>
+                        <p className={`text-3xl font-black flex items-center justify-center gap-4 cursor-pointer ${missionLang === 'en' ? 'text-white hover:text-indigo-400' : 'text-emerald-400 hover:text-emerald-300'}`}
+                            onClick={function () { playAudio(mission, missionLang === 'en' ? 'en-US' : 'es-MX'); }}>
+                            {mission}
+                            <Icon name="volume-2" size={24} className={missionLang === 'en' ? 'text-indigo-500' : 'text-emerald-500'} />
+                        </p>
+                        {feedback === 'correct' && <p className="mt-4 text-xl font-black text-emerald-400 animate-pop-in">✅ ¡Correcto!</p>}
+                        {feedback === 'incorrect' && <p className="mt-4 text-xl font-black text-rose-400 animate-pop-in">❌ Incorrecto, intenta de nuevo</p>}
+                    </div>
+
+                    <div className={`min-h-[120px] border-2 border-dashed rounded-[2.5rem] p-6 mb-8 flex flex-wrap gap-3 justify-center items-center transition-all ${isDark ? 'bg-zinc-950/80 border-zinc-800 shadow-inner' : 'bg-slate-100 border-slate-300'}`}>
+                        {selected.length === 0 && <p className="text-zinc-700 font-bold uppercase tracking-widest text-sm">Coloca las palabras traducidas aquí...</p>}
+                        {selected.map(function (w, i) {
+                            return <button key={'s' + i} onClick={function () { setSelected(selected.filter(function (_, idx) { return idx !== i; })); }} className={`px-6 py-3 rounded-2xl font-black text-lg shadow-2xl animate-pop-in ${theme.btnAccent}`}>{w}</button>;
+                        })}
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 justify-center mb-8">
+                        {pool.map(function (w, idx) {
+                            var isUsed = selected.indexOf(w) !== -1;
+                            return <button key={'p' + idx} disabled={isUsed} onClick={function () {
+                                setSelected(selected.concat([w]));
+                                playAudio(w, missionLang === 'en' ? 'es-MX' : 'en-US');
+                            }} className={`px-5 py-3 rounded-2xl border-2 font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 ${isUsed ? 'opacity-30 cursor-not-allowed' : ''} ${theme.cardBg} border-zinc-800 ${theme.cardHover} text-white`}>{w}</button>;
+                        })}
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <button onClick={checkAnswer} disabled={selected.length === 0}
+                            className={`flex items-center justify-center gap-2 mx-auto font-black px-10 py-4 rounded-full transition-all ${theme.btnPrimary} disabled:opacity-20`}>
+                            <Icon name="check-circle-2" size={20} /> Comprobar
+                        </button>
+                        <div className="flex justify-center gap-6 mt-2">
+                            <button onClick={function () { setSelected([]); setFeedback(null); }} className="text-rose-500 font-black uppercase tracking-widest text-xs hover:text-rose-400">Limpiar</button>
+                            <button onClick={generateSentence} className="text-indigo-500 font-black uppercase tracking-widest text-xs hover:text-indigo-400">Saltar</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        function ChatModule({ db, playAudio, theme, isDark }) {
+            const [messages, setMessages] = useState([
+                { role: 'assistant', content: 'Hello! I am your AI English teacher. Type any word or phrase you know. (You can also chat offline without an API Key)', translation: '¡Hola! Soy tu profesor de inglés con Inteligencia Artificial. Escribe cualquier frase. (Puedes chatear sin conexión también)' }
+            ]);
+            const [input, setInput] = useState('');
+            const [apiKey, setApiKey] = useState(localStorage.getItem('gemini_key') || '');
+            const [isLoading, setIsLoading] = useState(false);
+            const scrollRef = useRef(null);
+
+            useEffect(() => {
+                if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            }, [messages, isLoading]);
+
+            const saveApiKey = (key) => {
+                setApiKey(key);
+                localStorage.setItem('gemini_key', key);
+            };
+
+            const sendMessage = async () => {
+                if (!input.trim() || isLoading) return;
+                const userMsg = input;
+                setInput('');
+                setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+
+                if (!apiKey) {
+                    setTimeout(() => {
+                        const replies = [
+                            { content: "Very good! Do you know more words?", translation: "¡Muy bien! ¿Sabes más palabras?" },
+                            { content: "Excellent! Let's keep practicing.", translation: "¡Excelente! Sigamos practicando." },
+                            { content: "That is correct! What else can you say?", translation: "¡Eso es correcto! ¿Qué más puedes decir?" },
+                            { content: "Oh wow, great job! You are very smart.", translation: "¡Oh wow, gran trabajo! Eres muy inteligente." }
+                        ];
+                        const reply = replies[Math.floor(Math.random() * replies.length)];
+                        setMessages(prev => [...prev, { role: 'assistant', content: reply.content, translation: reply.translation }]);
+                        playAudio(reply.content, 'en-US');
+                    }, 800);
+                    return;
+                }
+
+                setIsLoading(true);
+                try {
+                    const prompt = `Eres un profesor amable de inglés para principiantes. Responde amigablemente al siguiente mensaje del usuario en inglés (muy corto, básico). Tu respuesta debe ser UNICAMENTE un objeto JSON en este formato estricto: {"en": "tu respuesta en inglés", "es": "tu respuesta traducida al español"}. No agregues markdown ni nada fuera del JSON. El usuario dice: "${userMsg}"`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error.message);
+
+                    const textResponse = data.candidates[0].content.parts[0].text;
+                    const cleanJson = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const parsed = JSON.parse(cleanJson);
+
+                    setMessages(prev => [...prev, { role: 'assistant', content: parsed.en, translation: parsed.es }]);
+                    playAudio(parsed.en, 'en-US');
+                } catch (error) {
+                    setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I had a connection or API Key problem.", translation: `Error de IA: Verifique su llave API (${error.message})` }]);
+                }
+                setIsLoading(false);
+            };
+
+            return (
+                <div className="max-w-2xl mx-auto h-[75vh] flex flex-col">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className={`text-3xl font-black text-white`}>Chat con IA 🤖</h2>
+                        <input
+                            type="password"
+                            value={apiKey}
+                            onChange={(e) => saveApiKey(e.target.value)}
+                            placeholder="Tu Gemini API Key (Opcional)"
+                            className={`p-2 rounded-xl border border-zinc-800 text-xs w-48 ${theme.inputBg}`}
+                            title="Ingresa tu clave de Gemini API para activar la IA"
+                        />
+                    </div>
+                    <div
+                        ref={scrollRef}
+                        className={`flex-1 overflow-y-auto p-8 rounded-[2.5rem] border-2 border-zinc-800 mb-6 space-y-6 shadow-inner scroll-smooth ${theme.cardBg}`}
+                    >
+                        {messages.map((m, i) => (
+                            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`p-5 rounded-3xl max-w-[85%] shadow-2xl text-base leading-relaxed ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-800 text-zinc-100 rounded-tl-none border border-zinc-700'}`}>
+                                    <p className="whitespace-pre-wrap">{m.content}</p>
+                                    {m.role === 'assistant' && (
+                                        <div className="flex flex-col gap-2 mt-4 pt-3 border-t border-zinc-700/50">
+                                            <p className="text-zinc-400 italic text-sm">{m.translation}</p>
+                                            <div className="flex gap-2 mt-2">
+                                                <button onClick={() => playAudio(m.content, 'en-US')} className="text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-1 hover:text-indigo-300 bg-indigo-900/40 p-2 rounded-lg">
+                                                    <Icon name="volume-2" size={12} /> INGLÉS
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                        {isLoading && (
+                            <div className="flex justify-start">
+                                <div className="p-5 rounded-3xl bg-zinc-800 text-zinc-100 rounded-tl-none shadow-2xl animate-pulse">
+                                    <p>Pensando...</p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex gap-4">
+                        <input
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                            className={`flex-1 p-5 rounded-2xl border-2 border-zinc-800 focus:border-indigo-500 outline-none transition-all font-medium ${theme.inputBg}`}
+                            placeholder="Habla conmigo..."
+                            disabled={isLoading}
+                        />
+                        <button onClick={sendMessage} disabled={isLoading} className={`p-5 rounded-2xl transition-all shadow-2xl ${isLoading ? 'opacity-50' : ''} ${theme.btnPrimary}`}>
+                            <Icon name="send" size={24} />
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        function DatabaseManager({ db, setDb, theme, showToast }) {
+            const [newWord, setNewWord] = useState({ en: '', es: '', pron: '', emoji: '', category: 'Varios' });
+
+            const handleAdd = () => {
+                if (!newWord.en || !newWord.es) return;
+                setDb(prev => [{ ...newWord, id: Date.now() }, ...prev]);
+                showToast(`¡Añadida la palabra ${newWord.en}!`);
+                setNewWord({ en: '', es: '', pron: '', emoji: '', category: 'Varios' });
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className={`text-3xl font-black text-white`}>Mi Base de Datos</h2>
+                    </div>
+
+                    <div className={`p-6 mb-8 rounded-3xl border border-zinc-800 ${theme.cardBg}`}>
+                        <h3 className="text-indigo-400 font-black uppercase text-xs tracking-widest mb-4">Añadir Palabra Manual</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <input value={newWord.en} onChange={e => setNewWord({ ...newWord, en: e.target.value })} placeholder="Inglés (ej: Cat)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.es} onChange={e => setNewWord({ ...newWord, es: e.target.value })} placeholder="Español (ej: Gato)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.pron} onChange={e => setNewWord({ ...newWord, pron: e.target.value })} placeholder="Pronun. (ej: kat)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <input value={newWord.emoji} onChange={e => setNewWord({ ...newWord, emoji: e.target.value })} placeholder="Emoji (ej: 🐈)" className={`p-3 rounded-xl border border-zinc-800 text-sm outline-none ${theme.inputBg}`} />
+                            <button onClick={handleAdd} className={`px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${theme.btnPrimary}`}>
+                                <Icon name="plus-circle" size={18} /> Añadir
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className={`rounded-[2.5rem] border overflow-hidden shadow-2xl transition-all ${theme.cardBg} border-zinc-800`}>
+                        <div className="overflow-x-auto h-[500px] overflow-y-auto">
+                            <table className="w-full text-left relative">
+                                <thead className="bg-zinc-950 sticky top-0 z-10 shadow-md">
+                                    <tr>
+                                        <th className="p-6 font-black text-indigo-400 uppercase text-xs tracking-[0.2em]">Inglés</th>
+                                        <th className="p-6 font-black text-emerald-500 uppercase text-xs tracking-[0.2em]">Español</th>
+                                        <th className="p-6 font-black text-amber-500 uppercase text-xs tracking-[0.2em]">Sonido</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {db.map(w => (
+                                        <tr key={w.id} className="border-t border-zinc-800/50 hover:bg-indigo-500/5 transition-colors group">
+                                            <td className="p-6 font-bold flex items-center gap-4 text-white">
+                                                <span className="text-2xl group-hover:scale-125 transition-transform duration-300">{w.emoji}</span>
+                                                <div className="flex flex-col">
+                                                    <span className="text-lg">{w.en}</span>
+                                                    <span className="text-[10px] text-zinc-600 font-normal uppercase tracking-widest">{w.category}</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-6 text-zinc-400 font-medium">{w.es}</td>
+                                            <td className="p-6 font-mono text-sm text-indigo-400/80 tracking-widest">/{w.pron}/</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,651 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+    Volume2,
+    Brain,
+    Puzzle,
+    Database,
+    ChevronRight,
+    ChevronLeft,
+    CheckCircle2,
+    PlusCircle,
+    RefreshCw,
+    Play,
+    Mic,
+    Moon,
+    Sun,
+    Sparkles,
+    Loader2,
+    HelpCircle,
+    Maximize,
+    Minimize,
+    Square,
+    MessageSquare,
+    Send,
+    Zap
+} from 'lucide-react';
+
+// --- BASE DE DATOS INICIAL ---
+const initialDB = [
+    { id: 1, en: "I", es: "Yo", pron: "ai", emoji: "🙋", category: "Pronombres" },
+    { id: 2, en: "You", es: "Tú", pron: "iu", emoji: "👉", category: "Pronombres" },
+    { id: 3, en: "He", es: "Él", pron: "ji", emoji: "👨", category: "Pronombres" },
+    { id: 4, en: "She", es: "Ella", pron: "shi", emoji: "👩", category: "Pronombres" },
+    { id: 8, en: "want", es: "querer", pron: "uant", emoji: "🤲", category: "Verbos" },
+    { id: 9, en: "have", es: "tener", pron: "jav", emoji: "🎒", category: "Verbos" },
+    { id: 11, en: "like", es: "gustar", pron: "laik", emoji: "👍", category: "Verbos" },
+    { id: 15, en: "eat", es: "comer", pron: "it", emoji: "🍽️", category: "Verbos" },
+    { id: 30, en: "Water", es: "Agua", pron: "uó-ter", emoji: "💧", category: "Comida" },
+    { id: 31, en: "Apple", es: "Manzana", pron: "á-pol", emoji: "🍎", category: "Comida" },
+    { id: 33, en: "Bread", es: "Pan", pron: "bred", emoji: "🍞", category: "Comida" },
+    { id: 55, en: "House", es: "Casa", pron: "jáus", emoji: "🏠", category: "Lugares" },
+];
+
+// --- GEMINI API INTEGRATION UTILITY ---
+const callGemini = async (prompt, systemInstruction = "Eres un tutor de inglés experto y amigable.") => {
+    const apiKey = ""; // La clave se proporciona en el entorno de ejecución
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        systemInstruction: { parts: [{ text: systemInstruction }] }
+    };
+
+    const delays = [1000, 2000, 4000, 8000, 16000];
+
+    for (let i = 0; i <= delays.length; i++) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se pudo obtener respuesta.";
+        } catch (error) {
+            if (i === delays.length) throw error;
+            await new Promise(r => setTimeout(r, delays[i]));
+        }
+    }
+};
+
+const callGeminiJSON = async (prompt, schema) => {
+    const apiKey = "";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+    const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: schema
+        }
+    };
+
+    const delays = [1000, 2000, 4000, 8000, 16000];
+    for (let i = 0; i <= delays.length; i++) {
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            return JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
+        } catch (error) {
+            if (i === delays.length) throw error;
+            await new Promise(r => setTimeout(r, delays[i]));
+        }
+    }
+};
+
+// --- COMPONENTE PRINCIPAL ---
+export default function App() {
+    const [db, setDb] = useState(initialDB);
+    const [currentTab, setCurrentTab] = useState('phonetics');
+    const [toast, setToast] = useState(null);
+    const [isDark, setIsDark] = useState(true);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const appRef = useRef(null);
+
+    const toggleFullscreen = () => {
+        if (!isFullscreen) {
+            if (appRef.current.requestFullscreen) appRef.current.requestFullscreen().catch(() => setIsFullscreen(true));
+            else setIsFullscreen(true);
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => setIsFullscreen(false));
+            else setIsFullscreen(false);
+        }
+    };
+
+    const playAudio = (text, lang = 'en-US') => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+    };
+
+    const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 3000);
+    };
+
+    const theme = {
+        bgApp: isDark ? 'bg-black text-slate-100' : 'bg-slate-50 text-slate-800',
+        navBg: isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-white border-slate-200',
+        cardBg: isDark ? 'bg-zinc-900 border-zinc-800 shadow-xl' : 'bg-white border-slate-200 shadow-sm',
+        cardHover: isDark ? 'hover:bg-zinc-800 hover:border-indigo-500/50' : 'hover:bg-slate-50 hover:border-slate-300',
+        textMuted: isDark ? 'text-zinc-500' : 'text-slate-500',
+        textBold: isDark ? 'text-white' : 'text-slate-800',
+        inputBg: isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-slate-50 border-slate-200 text-slate-800',
+        btnPrimary: 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 active:scale-95 transition-all',
+        btnSecondary: isDark ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 active:scale-95 transition-all' : 'bg-slate-200 hover:bg-slate-300 text-slate-800 active:scale-95 transition-all',
+        btnAccent: 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-500/20 active:scale-95 transition-all',
+        btnDanger: isDark ? 'bg-rose-900/30 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-900/50' : 'bg-rose-100 hover:bg-rose-600 text-rose-600 hover:text-white active:scale-95 transition-all'
+    };
+
+    return (
+        <div ref={appRef} className={`min-h-screen font-sans transition-colors duration-300 ${isFullscreen ? 'fixed inset-0 z-[100] w-screen h-screen overflow-y-auto bg-black' : 'pb-20 md:pb-0 md:pl-64'} ${theme.bgApp}`}>
+            {toast && (
+                <div className="fixed top-4 right-4 z-[110] bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-2 animate-bounce border border-indigo-400">
+                    <CheckCircle2 size={20} /> {toast}
+                </div>
+            )}
+
+            <nav className={`${isFullscreen ? 'hidden' : 'fixed bottom-0 left-0 w-full border-t md:w-64 md:h-screen md:border-t-0 md:border-r flex md:flex-col overflow-x-auto whitespace-nowrap p-2 md:p-4 z-40 transition-colors duration-300'} ${theme.navBg}`}>
+                <div className="hidden md:block mb-8 mt-4 text-center">
+                    <h1 className="text-2xl font-bold text-indigo-500">English<span className="text-amber-500">Play</span></h1>
+                    <p className={`text-xs mt-1 ${theme.textMuted}`}>Potenciado por Gemini AI</p>
+                </div>
+                <NavButton icon={<Mic />} label="0. Sonidos" active={currentTab === 'phonetics'} onClick={() => setCurrentTab('phonetics')} theme={theme} isDark={isDark} />
+                <NavButton icon={<Volume2 />} label="1. Pronunciar" active={currentTab === 'pronunciation'} onClick={() => setCurrentTab('pronunciation')} theme={theme} isDark={isDark} />
+                <NavButton icon={<Brain />} label="2. Visual" active={currentTab === 'visual'} onClick={() => setCurrentTab('visual')} theme={theme} isDark={isDark} />
+                <NavButton icon={<Puzzle />} label="3. Lego" active={currentTab === 'lego'} onClick={() => setCurrentTab('lego')} theme={theme} isDark={isDark} />
+                <NavButton icon={<MessageSquare />} label="4. Chat ✨" active={currentTab === 'chat'} onClick={() => setCurrentTab('chat')} theme={theme} isDark={isDark} />
+                <div className="md:mt-auto">
+                    <NavButton icon={<Database />} label="Mi DB" active={currentTab === 'database'} onClick={() => setCurrentTab('database')} isHighlight theme={theme} isDark={isDark} />
+                    <button onClick={() => setIsDark(!isDark)} className="w-full mt-2 flex items-center justify-center p-3 rounded-xl hover:bg-zinc-900 transition-colors text-zinc-500">
+                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                    </button>
+                </div>
+            </nav>
+
+            <main className={`p-4 transition-all duration-300 ${isFullscreen ? 'w-full max-w-5xl mx-auto py-10' : 'md:p-8 max-w-5xl mx-auto'}`}>
+                {currentTab === 'phonetics' && <PhoneticsModule playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                {currentTab === 'pronunciation' && <PronunciationGym db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                {currentTab === 'visual' && <VisualGame db={db} playAudio={playAudio} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                {currentTab === 'lego' && <LegoGame db={db} playAudio={playAudio} theme={theme} isDark={isDark} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+                {currentTab === 'chat' && <ChatModule db={db} playAudio={playAudio} theme={theme} isDark={isDark} />}
+                {currentTab === 'database' && <DatabaseManager db={db} setDb={setDb} showToast={showToast} theme={theme} isFullscreen={isFullscreen} toggleFullscreen={toggleFullscreen} />}
+            </main>
+        </div>
+    );
+}
+
+function NavButton({ icon, label, active, onClick, isHighlight, isDark, theme }) {
+    const activeClass = isDark ? 'bg-indigo-900/40 text-indigo-400 border border-indigo-500/30 shadow-lg' : 'bg-indigo-100 text-indigo-700';
+    const inactiveClass = isDark ? 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-900' : 'text-slate-500 hover:bg-slate-100';
+    const highlightClass = isDark ? (active ? 'bg-amber-900/40 text-amber-400 border border-amber-500/30' : 'text-amber-500 hover:bg-zinc-900') : (active ? 'bg-amber-100 text-amber-800' : 'bg-amber-50 text-amber-700');
+
+    return (
+        <button onClick={onClick} className={`flex flex-col md:flex-row items-center gap-1 md:gap-3 p-2 md:p-3 rounded-2xl transition-all w-full mb-1 ${active ? activeClass : inactiveClass} ${isHighlight ? highlightClass : ''}`}>
+            <div className={`${active ? 'scale-110' : ''} transition-transform`}>{icon}</div>
+            <span className="text-[10px] md:text-sm font-bold tracking-tight">{label}</span>
+        </button>
+    );
+}
+
+// --- MÓDULO: LABORATORIO DE SONIDOS ---
+function PhoneticsModule({ playAudio, theme, isDark, isFullscreen, toggleFullscreen }) {
+    const [recordings, setRecordings] = useState({});
+    const [recordingState, setRecordingState] = useState(null);
+    const [aiTip, setAiTip] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+
+    const getAITip = async (sound) => {
+        setIsLoading(true);
+        setAiTip(null);
+        try {
+            const prompt = `Como experto fonetista, da un consejo anatómico (boca, lengua, aire) para pronunciar correctamente el sonido "${sound.letter}" (${sound.s}) en inglés para un hispanohablante. Máximo 2 frases.`;
+            const tip = await callGemini(prompt);
+            setAiTip({ letter: sound.letter, tip });
+        } catch (e) {
+            setAiTip({ letter: sound.letter, tip: "Error al contactar con el tutor IA." });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const alphabet = [
+        { L: 'A', s: '/eɪ/', w: 'Apple', sound: 'ah', desc: 'Nombre: "ei". Sonido: "a" abierta.' },
+        { L: 'B', s: '/biː/', w: 'Banana', sound: 'buh', desc: 'Nombre: "bi". Sonido: "b" explosiva.' },
+        { L: 'C', s: '/siː/', w: 'Cat', sound: 'kuh', desc: 'Nombre: "si". Sonido: "k" fuerte.' },
+        { L: 'D', s: '/diː/', w: 'Dog', sound: 'duh', desc: 'Nombre: "di". Sonido: "d" dental.' },
+        { L: 'E', s: '/iː/', w: 'Elephant', sound: 'eh', desc: 'Nombre: "i". Sonido: "e" seca.' },
+        { L: 'G', s: '/dʒiː/', w: 'Green', sound: 'guh', desc: 'Nombre: "yi". Sonido: "g" de gato.' },
+        { L: 'H', s: '/eɪtʃ/', w: 'House', sound: 'hhh', desc: 'Nombre: "eich". Sonido: aire suave.' },
+        { L: 'R', s: '/ɑːr/', w: 'Red', sound: 'rrr', desc: 'Nombre: "ar". Sonido: lengua curva.' },
+        { L: 'V', s: '/viː/', w: 'Very', sound: 'vvv', desc: 'Nombre: "vi". Sonido: vibración "v".' },
+        { L: 'Z', s: '/ziː/', w: 'Zoo', sound: 'zzz', desc: 'Nombre: "zi". Sonido: abeja.' }
+    ];
+
+    const combinations = [
+        { letter: 'CH', s: '/tʃ/', w: 'Cheese', audio: 'ch ch ch', desc: 'Explosión corta.' },
+        { letter: 'SH', s: '/ʃ/', w: 'Shoe', audio: 'sh sh sh', desc: 'Como pedir silencio.' },
+        { letter: 'TH (S)', s: '/θ/', w: 'Think', audio: 'th th th', desc: 'Aire entre dientes.' },
+        { letter: 'TH (Z)', s: '/ð/', w: 'This', audio: 'the the the', desc: 'Vibra entre dientes.' },
+    ];
+
+    const startRecording = async (id) => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = recorder;
+            audioChunksRef.current = [];
+            recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
+            recorder.onstop = () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                setRecordings(prev => ({ ...prev, [id]: audioUrl }));
+                stream.getTracks().forEach(track => track.stop());
+            };
+            recorder.start();
+            setRecordingState(id);
+        } catch (err) { console.error(err); }
+    };
+
+    const stopRecording = () => { if (mediaRecorderRef.current) { mediaRecorderRef.current.stop(); setRecordingState(null); } };
+    const playRecording = (id) => { if (recordings[id]) { new Audio(recordings[id]).play(); } };
+
+    const SoundCard = ({ item, idPrefix }) => {
+        const cardId = `${idPrefix}-${item.letter || item.L}`;
+        return (
+            <div className={`p-4 rounded-3xl border transition-all duration-300 relative group ${theme.cardBg} ${theme.cardHover}`}>
+                <button onClick={() => getAITip(item)} className="absolute top-3 right-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" title="Pedir consejo IA">
+                    <Sparkles size={16} />
+                </button>
+                <span className={`text-4xl font-black block text-center mb-1 ${theme.textBold}`}>{item.letter || item.L}</span>
+                <span className="text-indigo-400 font-mono text-sm block text-center mb-2">{item.s}</span>
+                <p className={`text-[10px] text-center mb-4 h-8 leading-tight ${theme.textMuted}`}>{item.desc}</p>
+                <div className="grid grid-cols-2 gap-2 w-full mt-auto">
+                    <button onClick={() => playAudio(item.audio || item.sound || item.L)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnAccent}`}>Sonido</button>
+                    <button onClick={() => playAudio(item.w)} className={`text-[10px] font-bold p-2.5 rounded-xl ${theme.btnPrimary}`}>Palabra</button>
+                    <button onClick={() => recordingState === cardId ? stopRecording() : startRecording(cardId)} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordingState === cardId ? 'bg-rose-500 text-white animate-pulse' : theme.btnDanger}`}>
+                        {recordingState === cardId ? 'Fin' : 'Grabar'}
+                    </button>
+                    <button onClick={() => playRecording(cardId)} disabled={!recordings[cardId]} className={`text-[10px] font-bold p-2.5 rounded-xl transition-all ${recordings[cardId] ? theme.btnSecondary : 'opacity-20 cursor-not-allowed'}`}>Mi Voz</button>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className="animate-fade-in pb-10">
+            <div className="flex justify-between items-start mb-8">
+                <div>
+                    <h2 className={`text-4xl font-black flex items-center gap-3 ${theme.textBold}`}><Mic className="text-rose-500" /> Laboratorio</h2>
+                    <p className={`mt-2 ${theme.textMuted}`}>Usa los botones ✨ para consejos anatómicos de IA.</p>
+                </div>
+                <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted} hover:text-indigo-400`}>
+                    {isFullscreen ? <Minimize /> : <Maximize />}
+                </button>
+            </div>
+
+            {isLoading && (
+                <div className="mb-6 p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center gap-3 text-indigo-400 animate-pulse">
+                    <Loader2 className="animate-spin" /> <span className="text-sm font-bold">Consultando al Tutor IA...</span>
+                </div>
+            )}
+
+            {aiTip && (
+                <div className="mb-6 p-5 rounded-3xl bg-indigo-900/30 border border-indigo-500/30 animate-pop-in relative">
+                    <button onClick={() => setAiTip(null)} className="absolute top-4 right-4 text-zinc-500 hover:text-white">&times;</button>
+                    <h4 className="text-indigo-400 font-bold text-sm mb-2 flex items-center gap-2">
+                        <Sparkles size={16} /> Consejo para "{aiTip.letter}"
+                    </h4>
+                    <p className="text-sm text-zinc-100 leading-relaxed italic">"{aiTip.tip}"</p>
+                </div>
+            )}
+
+            <div className="space-y-16">
+                <section>
+                    <h3 className={`text-xl font-bold text-amber-500 border-l-4 border-amber-500 pl-4 mb-6`}>Abecedario Destacado</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {alphabet.map(item => <SoundCard key={item.L} item={item} idPrefix="abc" />)}
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className={`text-xl font-bold text-violet-500 border-l-4 border-violet-500 pl-4 mb-6`}>Combinaciones Difíciles</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {combinations.map(item => <SoundCard key={item.letter} item={item} idPrefix="comb" />)}
+                    </div>
+                </section>
+            </div>
+        </div>
+    );
+}
+
+// --- OTROS MÓDULOS ---
+function PronunciationGym({ db, playAudio, theme, isFullscreen, toggleFullscreen }) {
+    const [idx, setIdx] = useState(0);
+    const [story, setStory] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const word = db[idx];
+
+    const getContext = async () => {
+        setLoading(true);
+        setStory(null);
+        try {
+            const prompt = `Escribe una micro-historia divertida de máximo 20 palabras en inglés usando la palabra "${word.en}". Incluye la traducción al español abajo.`;
+            const res = await callGemini(prompt);
+            setStory(res);
+        } catch (e) {
+            setStory("No se pudo generar el contexto.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-center animate-fade-in max-w-lg mx-auto">
+            <div className="flex justify-between items-center w-full mb-8">
+                <h2 className={`text-3xl font-black ${theme.textBold}`}>Pronunciación</h2>
+                <button onClick={toggleFullscreen} className={`p-3 rounded-2xl ${theme.cardBg} ${theme.textMuted}`}>
+                    {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                </button>
+            </div>
+            <div className={`w-full rounded-[2.5rem] p-12 border-2 transition-all shadow-2xl ${theme.cardBg} border-indigo-500/10 text-center relative overflow-hidden`}>
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
+                <div className="text-9xl mb-8 transform hover:scale-110 transition-transform duration-500 drop-shadow-[0_20px_20px_rgba(79,70,229,0.3)]">{word.emoji}</div>
+                <h3 className={`text-6xl font-black mb-3 ${theme.textBold}`}>{word.en}</h3>
+                <p className="text-indigo-400 font-mono text-3xl mb-8">/{word.pron}/</p>
+                <div className="h-px bg-zinc-800 w-full mb-8"></div>
+                <p className="text-3xl font-medium text-zinc-400">{word.es}</p>
+
+                <button
+                    onClick={getContext}
+                    disabled={loading}
+                    className="mt-10 w-full py-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold flex items-center justify-center gap-2 hover:bg-indigo-500 hover:text-white transition-all disabled:opacity-50"
+                >
+                    {loading ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />} ✨ Ver en contexto IA
+                </button>
+
+                {story && (
+                    <div className="mt-6 p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-left animate-pop-in">
+                        <p className="text-sm italic text-zinc-300 mb-2 leading-relaxed">"{story}"</p>
+                        <button onClick={() => playAudio(story.split('\n')[0])} className="text-indigo-400 text-[10px] font-bold flex items-center gap-1">
+                            <Volume2 size={12} /> Reproducir Texto
+                        </button>
+                    </div>
+                )}
+            </div>
+            <div className="flex items-center gap-8 mt-12">
+                <button onClick={() => { setIdx((idx - 1 + db.length) % db.length); setStory(null); }} className={`p-5 rounded-full transition-all ${theme.btnSecondary}`}><ChevronLeft size={28} /></button>
+                <button onClick={() => playAudio(word.en)} className={`p-8 rounded-full shadow-2xl transform transition-all hover:scale-110 active:scale-95 ${theme.btnPrimary}`}><Volume2 size={48} /></button>
+                <button onClick={() => { setIdx((idx + 1) % db.length); setStory(null); }} className={`p-5 rounded-full transition-all ${theme.btnSecondary}`}><ChevronRight size={28} /></button>
+            </div>
+        </div>
+    );
+}
+
+function VisualGame({ db, playAudio, theme, isFullscreen, toggleFullscreen }) {
+    const [target, setTarget] = useState(null);
+    const [options, setOptions] = useState([]);
+    const [score, setScore] = useState(0);
+    const next = () => {
+        const t = db[Math.floor(Math.random() * db.length)];
+        const opts = [t, ...db.filter(x => x.id !== t.id).sort(() => 0.5 - Math.random()).slice(0, 3)].sort(() => 0.5 - Math.random());
+        setTarget(t); setOptions(opts);
+    };
+    useEffect(() => { next(); }, []);
+    if (!target) return null;
+    return (
+        <div className="max-w-md mx-auto animate-fade-in">
+            <div className="flex justify-between items-center mb-8">
+                <h2 className={`text-3xl font-black ${theme.textBold}`}>Visual</h2>
+                <div className="flex items-center gap-4">
+                    <span className="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-5 py-2 rounded-full font-black text-sm shadow-xl">SCORE: {score}</span>
+                    <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted}`}>{isFullscreen ? <Minimize /> : <Maximize />}</button>
+                </div>
+            </div>
+            <div className={`p-12 rounded-[2.5rem] border-2 border-zinc-800 text-center mb-10 shadow-2xl transition-all ${theme.cardBg}`}>
+                <div className="text-9xl mb-8 animate-bounce-slow drop-shadow-[0_20px_30px_rgba(255,255,255,0.1)]">{target.emoji}</div>
+                <p className="text-3xl font-black tracking-widest text-white uppercase">{target.es}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {options.map(opt => (
+                    <button key={opt.id} onClick={() => { if (opt.id === target.id) { setScore(s => s + 1); next(); } }} className={`p-6 rounded-3xl border-2 font-black text-xl transition-all transform active:scale-95 ${theme.cardBg} ${theme.cardHover} border-zinc-800`}>
+                        {opt.en}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function LegoGame({ db, playAudio, theme, isDark }) {
+    const [selected, setSelected] = useState([]);
+    const [explanation, setExplanation] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const pool = ["I", "want", "bread", "water", "like", "Apple", "You", "need", "Banana", "He", "likes", "Milk"];
+
+    const analyzeGrammar = async () => {
+        if (selected.length === 0) return;
+        setLoading(true);
+        try {
+            const phrase = selected.join(" ");
+            const prompt = `Analiza gramaticalmente la frase en inglés "${phrase}". Explica por qué se usa así brevemente en español. Máximo 2 frases.`;
+            const res = await callGemini(prompt);
+            setExplanation(res);
+        } catch (e) {
+            setExplanation("Error al analizar.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="max-w-2xl mx-auto animate-fade-in text-center">
+            <h2 className={`text-3xl font-black mb-8 ${theme.textBold}`}>Lego Frases</h2>
+            <div className={`p-10 rounded-[2.5rem] mb-10 shadow-2xl border transition-all ${theme.cardBg} border-indigo-500/20`}>
+                <p className="text-indigo-400 text-xs font-black uppercase tracking-[0.2em] mb-4">Misión:</p>
+                <p className="text-4xl font-black text-white">Yo quiero pan</p>
+            </div>
+            <div className={`min-h-[140px] border-2 border-dashed rounded-[2.5rem] p-8 mb-10 flex flex-wrap gap-4 justify-center items-center transition-all ${isDark ? 'bg-zinc-950/80 border-zinc-800 shadow-inner' : 'bg-slate-100 border-slate-300'}`}>
+                {selected.length === 0 && <p className="text-zinc-700 font-bold uppercase tracking-widest text-sm">Arrastra las piezas aquí...</p>}
+                {selected.map((w, i) => (
+                    <button key={i} onClick={() => setSelected(selected.filter((_, idx) => idx !== i))} className={`px-8 py-4 rounded-2xl font-black text-xl shadow-2xl animate-pop-in ${theme.btnAccent}`}>{w}</button>
+                ))}
+            </div>
+            <div className="flex flex-wrap gap-4 justify-center mb-10">
+                {pool.map(w => (
+                    <button key={w} onClick={() => setSelected([...selected, w])} className={`px-6 py-4 rounded-2xl border-2 font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 ${theme.cardBg} border-zinc-800 ${theme.cardHover}`}>{w}</button>
+                ))}
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <button
+                    onClick={analyzeGrammar}
+                    disabled={selected.length === 0 || loading}
+                    className={`flex items-center gap-2 mx-auto font-black px-10 py-4 rounded-full transition-all ${theme.btnSecondary} disabled:opacity-20`}
+                >
+                    {loading ? <Loader2 className="animate-spin" /> : <Sparkles size={20} />} ✨ ¿Por qué es así? IA
+                </button>
+
+                {explanation && (
+                    <div className="p-5 rounded-3xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm italic animate-pop-in">
+                        "{explanation}"
+                    </div>
+                )}
+
+                <button onClick={() => { setSelected([]); setExplanation(null); }} className="text-rose-500 font-black uppercase tracking-widest text-xs hover:text-rose-400 mt-4">
+                    Reiniciar Piezas
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function ChatModule({ db, playAudio, theme, isDark }) {
+    const [messages, setMessages] = useState([
+        { role: 'assistant', content: 'Hi! I\'m your Gemini Tutor ✨. Let\'s speak in English. How are you today?' }
+    ]);
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
+    const scrollRef = useRef(null);
+
+    useEffect(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, [messages]);
+
+    const sendMessage = async () => {
+        if (!input.trim() || loading) return;
+        const userMsg = input;
+        setInput('');
+        setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+        setLoading(true);
+
+        try {
+            const history = messages.map(m => `${m.role === 'user' ? 'Estudiante' : 'Tutor'}: ${m.content}`).join('\n');
+            const prompt = `Continúa la conversación como un tutor de inglés. Si el estudiante cometió un error gramatical en su último mensaje, corrígelo amablemente. Responde siempre en inglés primero y una breve traducción al final.\n\nHistorial:\n${history}\nEstudiante: ${userMsg}`;
+
+            const res = await callGemini(prompt);
+            setMessages(prev => [...prev, { role: 'assistant', content: res }]);
+        } catch (e) {
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I had a connection error. Try again!' }]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="max-w-2xl mx-auto h-[75vh] flex flex-col">
+            <h2 className={`text-3xl font-black mb-6 ${theme.textBold}`}>Chat IA ✨</h2>
+            <div
+                ref={scrollRef}
+                className={`flex-1 overflow-y-auto p-8 rounded-[2.5rem] border-2 border-zinc-800 mb-6 space-y-6 shadow-inner scroll-smooth ${theme.cardBg}`}
+            >
+                {messages.map((m, i) => (
+                    <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`p-5 rounded-3xl max-w-[85%] shadow-2xl text-base leading-relaxed ${m.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-none' : 'bg-zinc-800 text-zinc-100 rounded-tl-none border border-zinc-700'}`}>
+                            <p className="whitespace-pre-wrap">{m.content}</p>
+                            {m.role === 'assistant' && (
+                                <button onClick={() => playAudio(m.content.split('\n')[0])} className="mt-3 text-[10px] font-black uppercase tracking-widest text-indigo-400 flex items-center gap-1 hover:text-indigo-300">
+                                    <Volume2 size={12} /> Escuchar IA
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+                {loading && <div className="text-zinc-500 animate-pulse text-xs font-bold uppercase tracking-widest">IA está escribiendo...</div>}
+            </div>
+            <div className="flex gap-4">
+                <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    className={`flex-1 p-5 rounded-2xl border-2 border-zinc-800 focus:border-indigo-500 outline-none transition-all font-medium ${theme.inputBg}`}
+                    placeholder="Habla conmigo en inglés..."
+                />
+                <button onClick={sendMessage} className={`p-5 rounded-2xl transition-all shadow-2xl ${theme.btnPrimary}`}>
+                    <Send size={24} />
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function DatabaseManager({ db, setDb, theme, showToast }) {
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [topic, setTopic] = useState('');
+
+    const generateWords = async () => {
+        if (!topic.trim()) return;
+        setIsGenerating(true);
+        try {
+            const prompt = `Genera un JSON con una lista de 3 palabras nuevas en inglés sobre el tema "${topic}". Formato: [{"en": "word", "es": "traducción", "pron": "fonética", "emoji": "un solo emoji"}].`;
+            const schema = {
+                type: "ARRAY",
+                items: {
+                    type: "OBJECT",
+                    properties: {
+                        en: { type: "STRING" },
+                        es: { type: "STRING" },
+                        pron: { type: "STRING" },
+                        emoji: { type: "STRING" }
+                    },
+                    required: ["en", "es", "pron", "emoji"]
+                }
+            };
+
+            const newWords = await callGeminiJSON(prompt, schema);
+            const withIds = newWords.map(w => ({ ...w, id: Date.now() + Math.random(), category: "IA Generada" }));
+            setDb(prev => [...withIds, ...prev]);
+            showToast(`¡Añadidas 3 palabras sobre ${topic}!`);
+            setTopic('');
+        } catch (e) {
+            showToast("Error al generar palabras.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    return (
+        <div className="max-w-4xl mx-auto">
+            <div className="flex justify-between items-center mb-8">
+                <h2 className={`text-3xl font-black ${theme.textBold}`}>Mi Base de Datos</h2>
+                <div className="flex gap-3">
+                    <input
+                        value={topic}
+                        onChange={(e) => setTopic(e.target.value)}
+                        placeholder="Tema (ej: Espacio, Cocina...)"
+                        className={`p-3 rounded-xl border border-zinc-800 text-sm focus:border-indigo-500 outline-none ${theme.inputBg}`}
+                    />
+                    <button
+                        onClick={generateWords}
+                        disabled={isGenerating || !topic}
+                        className={`px-5 py-3 rounded-xl font-bold flex items-center gap-2 disabled:opacity-30 ${theme.btnPrimary}`}
+                    >
+                        {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />} ✨ Sugerir IA
+                    </button>
+                </div>
+            </div>
+            <div className={`rounded-[2.5rem] border overflow-hidden shadow-2xl transition-all ${theme.cardBg} border-zinc-800`}>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-zinc-950">
+                            <tr>
+                                <th className="p-6 font-black text-indigo-400 uppercase text-xs tracking-[0.2em]">Inglés</th>
+                                <th className="p-6 font-black text-zinc-500 uppercase text-xs tracking-[0.2em]">Español</th>
+                                <th className="p-6 font-black text-amber-500 uppercase text-xs tracking-[0.2em]">Sonido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {db.map(w => (
+                                <tr key={w.id} className="border-t border-zinc-800/50 hover:bg-indigo-500/5 transition-colors group">
+                                    <td className="p-6 font-bold flex items-center gap-4 text-white">
+                                        <span className="text-2xl group-hover:scale-125 transition-transform duration-300">{w.emoji}</span>
+                                        <div className="flex flex-col">
+                                            <span className="text-lg">{w.en}</span>
+                                            <span className="text-[10px] text-zinc-600 font-normal uppercase tracking-widest">{w.category}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-6 text-zinc-400 font-medium">{w.es}</td>
+                                    <td className="p-6 font-mono text-sm text-indigo-400/80 tracking-widest">/{w.pron}/</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+}
