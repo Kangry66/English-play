@@ -436,7 +436,8 @@
             const [score, setScore] = useState(0);
             const [feedback, setFeedback] = useState(null);
             const [locked, setLocked] = useState(false);
-            const next = () => {
+
+            const generateNext = () => {
                 setFeedback(null);
                 setLocked(false);
                 const t = db[Math.floor(Math.random() * db.length)];
@@ -444,8 +445,10 @@
                 setTarget(t); setOptions(opts);
                 setTimeout(() => playAudio(t.es, 'es-MX'), 500);
             };
-            useEffect(() => { next(); }, []);
+
+            useEffect(() => { generateNext(); }, []);
             if (!target) return null;
+
             return (
                 <div className="max-w-md mx-auto animate-fade-in">
                     <div className="flex justify-between items-center mb-8">
@@ -455,14 +458,15 @@
                             <button onClick={toggleFullscreen} className={`p-3 rounded-2xl transition-all ${theme.cardBg} ${theme.textMuted}`}>{isFullscreen ? <Icon name="minimize" /> : <Icon name="maximize" />}</button>
                         </div>
                     </div>
-                    <div className={`p-12 rounded-[2.5rem] border-2 text-center mb-10 shadow-2xl transition-all duration-500 relative cursor-pointer group ${feedback === 'correct' ? 'border-emerald-500 bg-emerald-900/30' : feedback === 'incorrect' ? 'border-rose-500 bg-rose-900/30' : 'border-zinc-800 ' + theme.cardBg}`} onClick={() => playAudio(target.es, 'es-MX')}>
+                    <div className={`p-12 rounded-[2.5rem] border-2 text-center mb-6 shadow-2xl transition-all duration-500 relative cursor-pointer group ${feedback === 'correct' ? 'border-emerald-500 bg-emerald-900/30' : feedback === 'incorrect' ? 'border-rose-500 bg-rose-900/30' : 'border-zinc-800 ' + theme.cardBg}`} onClick={() => playAudio(target.es, 'es-MX')}>
                         <Icon name="volume-2" className="absolute top-4 right-4 text-zinc-600 group-hover:text-emerald-400 transition-colors" />
                         <div className="text-9xl mb-8 animate-bounce-slow drop-shadow-[0_20px_30px_rgba(255,255,255,0.1)]">{target.emoji}</div>
                         <p className="text-3xl font-black tracking-widest text-emerald-400 uppercase">{target.es}</p>
                         {feedback === 'correct' && <p className="mt-4 text-2xl font-black text-emerald-400 animate-pop-in">✅ ¡Correcto!</p>}
                         {feedback === 'incorrect' && <p className="mt-4 text-2xl font-black text-rose-400 animate-pop-in">❌ Intenta de nuevo</p>}
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
                         {options.map(opt => (
                             <button key={opt.id} disabled={locked} onClick={() => {
                                 if (opt.id === target.id) {
@@ -470,7 +474,6 @@
                                     setFeedback('correct');
                                     setLocked(true);
                                     playAudio("Correct! " + opt.en, 'en-US');
-                                    setTimeout(() => next(), 2000);
                                 } else {
                                     setFeedback('incorrect');
                                     playAudio("Incorrect. Try again", 'en-US');
@@ -481,6 +484,12 @@
                             </button>
                         ))}
                     </div>
+
+                    {feedback === 'correct' && (
+                        <button onClick={generateNext} className={`w-full py-5 rounded-3xl font-black text-xl animate-pop-in transition-all ${theme.btnPrimary} flex items-center justify-center gap-3`}>
+                            Siguiente Palabra <Icon name="arrow-right" />
+                        </button>
+                    )}
                 </div>
             );
         }
@@ -492,6 +501,7 @@
             const [missionLang, setMissionLang] = useState('en');
             const [score, setScore] = useState(0);
             const [feedback, setFeedback] = useState(null);
+            const [isCorrect, setIsCorrect] = useState(false);
 
             var sentences = [
                 { en: ["I", "want", "a", "banana"], es: ["Yo", "quiero", "una", "banana"] },
@@ -534,13 +544,13 @@
                 }
 
                 setMission(missionWords.join(' '));
-
                 var extras = shuffle(extraPool.filter(function (d) { return answerWords.indexOf(d) === -1; })).slice(0, 4);
                 var allCards = shuffle(answerWords.concat(extras));
 
                 setPool(allCards);
                 setSelected([]);
                 setFeedback(null);
+                setIsCorrect(false);
             };
 
             useEffect(function () {
@@ -559,16 +569,11 @@
                 var answerLang = missionLang === 'en' ? 'es-MX' : 'en-US';
 
                 playAudio(userAnswer, answerLang);
-
                 if (userAnswer === correctAnswer) {
                     setFeedback('correct');
+                    setIsCorrect(true);
                     setScore(function (prev) { return prev + 1; });
-                    setTimeout(function () {
-                        playAudio('Correct!', 'en-US');
-                    }, 1000);
-                    setTimeout(function () {
-                        generateSentence();
-                    }, 2500);
+                    playAudio('Correct!', 'en-US');
                 } else {
                     setFeedback('incorrect');
                     setTimeout(function () {
@@ -599,14 +604,14 @@
                     <div className={`min-h-[120px] border-2 border-dashed rounded-[2.5rem] p-6 mb-8 flex flex-wrap gap-3 justify-center items-center transition-all ${isDark ? 'bg-zinc-950/80 border-zinc-800 shadow-inner' : 'bg-slate-100 border-slate-300'}`}>
                         {selected.length === 0 && <p className="text-zinc-700 font-bold uppercase tracking-widest text-sm">Coloca las palabras traducidas aquí...</p>}
                         {selected.map(function (w, i) {
-                            return <button key={'s' + i} onClick={function () { setSelected(selected.filter(function (_, idx) { return idx !== i; })); }} className={`px-6 py-3 rounded-2xl font-black text-lg shadow-2xl animate-pop-in ${theme.btnAccent}`}>{w}</button>;
+                            return <button key={'s' + i} onClick={function () { if (!isCorrect) setSelected(selected.filter(function (_, idx) { return idx !== i; })); }} className={`px-6 py-3 rounded-2xl font-black text-lg shadow-2xl animate-pop-in ${theme.btnAccent}`}>{w}</button>;
                         })}
                     </div>
 
                     <div className="flex flex-wrap gap-3 justify-center mb-8">
                         {pool.map(function (w, idx) {
                             var isUsed = selected.indexOf(w) !== -1;
-                            return <button key={'p' + idx} disabled={isUsed} onClick={function () {
+                            return <button key={'p' + idx} disabled={isUsed || isCorrect} onClick={function () {
                                 setSelected(selected.concat([w]));
                                 playAudio(w, missionLang === 'en' ? 'es-MX' : 'en-US');
                             }} className={`px-5 py-3 rounded-2xl border-2 font-bold shadow-xl transition-all transform hover:scale-105 active:scale-95 ${isUsed ? 'opacity-30 cursor-not-allowed' : ''} ${theme.cardBg} border-zinc-800 ${theme.cardHover} text-white`}>{w}</button>;
@@ -614,12 +619,19 @@
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <button onClick={checkAnswer} disabled={selected.length === 0}
-                            className={`flex items-center justify-center gap-2 mx-auto font-black px-10 py-4 rounded-full transition-all ${theme.btnPrimary} disabled:opacity-20`}>
-                            <Icon name="check-circle-2" size={20} /> Comprobar
-                        </button>
+                        {!isCorrect ? (
+                            <button onClick={checkAnswer} disabled={selected.length === 0}
+                                className={`flex items-center justify-center gap-2 mx-auto font-black px-10 py-4 rounded-full transition-all ${theme.btnPrimary} disabled:opacity-20`}>
+                                <Icon name="check-circle-2" size={20} /> Comprobar
+                            </button>
+                        ) : (
+                            <button onClick={generateSentence}
+                                className={`flex items-center justify-center gap-2 mx-auto font-black px-10 py-4 rounded-full transition-all bg-emerald-600 hover:bg-emerald-500 text-white animate-pop-in`}>
+                                Siguiente Frase <Icon name="arrow-right" size={20} />
+                            </button>
+                        )}
                         <div className="flex justify-center gap-6 mt-2">
-                            <button onClick={function () { setSelected([]); setFeedback(null); }} className="text-rose-500 font-black uppercase tracking-widest text-xs hover:text-rose-400">Limpiar</button>
+                            <button onClick={function () { if (!isCorrect) { setSelected([]); setFeedback(null); } }} className="text-rose-500 font-black uppercase tracking-widest text-xs hover:text-rose-400">Limpiar</button>
                             <button onClick={generateSentence} className="text-indigo-500 font-black uppercase tracking-widest text-xs hover:text-indigo-400">Saltar</button>
                         </div>
                     </div>
